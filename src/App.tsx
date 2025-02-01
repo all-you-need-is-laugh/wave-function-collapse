@@ -24,7 +24,7 @@ function App() {
     <Container>
       <InputPanel onTilesExtracted={onTilesExtracted} />
       <TilesPanel tiles={tiles} />
-      <OutputPanel />
+      <OutputPanel tiles={tiles} />
     </Container >
   )
 }
