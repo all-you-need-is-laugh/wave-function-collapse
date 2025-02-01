@@ -7,6 +7,7 @@ const Panel = styled.div`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  color: #000a;
 `;
 
 export default Panel;
