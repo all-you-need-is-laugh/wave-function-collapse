@@ -1,5 +1,13 @@
 import { Pixel, Tile } from './interfaces';
 
+const areTilesEqual = (tile1: Tile, tile2: Tile): boolean => {
+  return tile1.data.every((pixel, index) => 
+    pixel.r === tile2.data[index].r &&
+    pixel.g === tile2.data[index].g &&
+    pixel.b === tile2.data[index].b
+  );
+};
+
 export const extractTiles = ({ data, height, width}: ImageData, tileSize: number): Tile[] => {
   const tiles: Tile[] = [];
 
@@ -18,10 +26,14 @@ export const extractTiles = ({ data, height, width}: ImageData, tileSize: number
         }
       }
 
-      tiles.push({
+      const newTile = {
         size: tileSize,
         data: tileData,
-      });
+      };
+
+      if (!tiles.some(tile => areTilesEqual(tile, newTile))) {
+        tiles.push(newTile);
+      }
     }
   }
 
