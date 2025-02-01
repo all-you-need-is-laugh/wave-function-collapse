@@ -24,8 +24,6 @@ interface InputPanelProps {
 export function InputPanel({ onTilesExtracted = () => { } }: InputPanelProps) {
   const imageSrc = 'samples/City.png';
 
-  console.warn("### > InputPanel > render!");
-
   useEffect(() => {
     (async () => {
       const imageData = await readImageData(imageSrc);
