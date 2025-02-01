@@ -7,16 +7,14 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     react({
-      babel: {
         plugins: [
           [
-            'babel-plugin-styled-components',
+            '@swc/plugin-styled-components',
             {
               meaninglessFileNames: ['index', 'styles'],
             },
           ],
         ],
-      },
     }),
     // tsconfigPaths(),
   ],
