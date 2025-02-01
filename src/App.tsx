@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import styled from 'styled-components';
 import { InputPanel } from './components/InputPanel';
 import { OutputPanel } from './components/OutputPanel';
+import { Tile } from './utils/interfaces';
 
 const Container = styled.div`
   display: flex;
@@ -11,9 +13,13 @@ const Container = styled.div`
 `;
 
 function App() {
+  const onTilesExtracted = useCallback((tiles: Tile[]) => {
+    console.warn("### > onTilesExtracted > tiles:", tiles);
+  }, []);
+
   return (
     <Container>
-      <InputPanel />
+      <InputPanel onTilesExtracted={onTilesExtracted} />
       <OutputPanel />
     </Container >
   )
