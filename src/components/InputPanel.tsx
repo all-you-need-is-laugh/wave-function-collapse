@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
+import { Tile } from '../entities/Tile';
 import { extractTiles } from '../utils/extractTiles';
-import { Tile } from '../utils/interfaces';
 import { readImageData } from '../utils/readImageData';
 import Panel from './Panel';
 

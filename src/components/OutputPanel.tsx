@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import styled from 'styled-components';
+import { Tile } from '../entities/Tile';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
-import { Tile } from '../utils/interfaces';
 import Panel from './Panel';
 
 const OutputPanelStyled = styled(Panel)`

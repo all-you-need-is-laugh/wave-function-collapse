@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { InputPanel } from './components/InputPanel';
 import { OutputPanel } from './components/OutputPanel';
 import { TilesPanel } from './components/TilesPanel';
-import { Tile } from './utils/interfaces';
+import { Tile } from './entities/Tile';
 
 const Container = styled.div`
   display: flex;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Tile } from '../utils/interfaces';
+import { Tile } from '../entities/Tile';
 import Panel from './Panel';
 import TileSet from './TileSet';
 

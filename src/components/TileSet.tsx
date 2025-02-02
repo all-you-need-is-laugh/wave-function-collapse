@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Tile } from '../utils/interfaces';
+import { Tile } from '../entities/Tile';
 
 interface TileSetProps {
   tiles: Tile[];
@@ -18,7 +18,7 @@ const TileSet = ({ tiles }: TileSetProps) => {
       const context = canvas.getContext('2d');
       if (context) {
         const pixelSize = 10;
-        const columns = Math.ceil(Math.sqrt(tiles.length));
+        const columns = Math.min(10, Math.ceil(Math.sqrt(tiles.length)));
         const rows = Math.ceil(tiles.length / columns);
         const tileSize = tiles[0].size * pixelSize;
         canvas.width = columns * tileSize;
