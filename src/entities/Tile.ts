@@ -1,4 +1,4 @@
-import { Pixel } from "../utils/interfaces";
+import { Pixel } from "../utils/Pixel";
 
 export class Tile {
   constructor(

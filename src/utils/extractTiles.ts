@@ -1,5 +1,5 @@
 import { Tile } from '../entities/Tile';
-import { Pixel } from './interfaces';
+import { Pixel } from './Pixel';
 
 const areTilesEqual = (tile1: Tile, tile2: Tile): boolean => {
   return tile1.data.every((pixel, index) => 
@@ -23,7 +23,7 @@ export const extractTiles = ({ data, height, width}: ImageData, tileSize: number
           const g = data[pixelIndex * 4 + 1];
           const b = data[pixelIndex * 4 + 2];
 
-          tileData.push({ r, g, b });
+          tileData.push(new Pixel(r, g, b ));
         }
       }
 
