@@ -20,7 +20,14 @@ export function useIntervalExecution(executeFunction: () => void, interval: numb
 
   useEffect(() => {
     if (isRunning) {
-      intervalRef.current = setInterval(executeFunction, interval);
+      intervalRef.current = setInterval(() => {
+        try {
+          executeFunction();
+        } catch (error) {
+          console.error('Error executing function:', error);
+          stop();
+        }
+      }, interval);
     }
 
     return () => {
