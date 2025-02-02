@@ -1,8 +1,117 @@
 import { Pixel } from "../utils/Pixel";
 
+interface TileOverlappingParams {
+  xAStart: number,
+  xBStart: number,
+  xLen: number,
+  yAStart: number,
+  yBStart: number,
+  yLen: number
+}
+
 export class Tile {
+
+  readonly topNeighbors: Tile[] = [];
+  readonly rightNeighbors: Tile[] = [];
+  readonly bottomNeighbors: Tile[] = [];
+  readonly leftNeighbors: Tile[] = [];
+  
   constructor(
     public size: number,
     public data: Pixel[]
   ) {}
+
+  fillNeighbors(tiles: Tile[]): void {
+    this.topNeighbors.length = 0;
+    this.rightNeighbors.length = 0;
+    this.bottomNeighbors.length = 0;
+    this.leftNeighbors.length = 0;
+    
+    for (const tile of tiles) {
+      if (tile === this) {
+        continue;
+      }
+
+      if (this._checkTilesOverlapFromTop(tile)) {
+        this.topNeighbors.push(tile);
+      }
+
+      if (this._checkTilesOverlapFromRight(tile)) {
+        this.rightNeighbors.push(tile);
+      }
+
+      if (this._checkTilesOverlapFromBottom(tile)) {
+        this.bottomNeighbors.push(tile);
+      }
+
+      if (this._checkTilesOverlapFromLeft(tile)) {
+        this.leftNeighbors.push(tile);
+      }
+    }
+  }
+
+  private _checkTilesOverlapFromTop(tile: Tile): boolean {
+    return this._checkTilesOverlap(tile, {
+      xAStart: 0,
+      xBStart: 0,
+      xLen: this.size,
+      yAStart: 0,
+      yBStart: Math.ceil(this.size / 2) - 1,
+      yLen: Math.ceil(this.size / 2)
+    });
+  }
+
+  private _checkTilesOverlapFromRight(tile: Tile): boolean {
+    return this._checkTilesOverlap(tile, {
+      xAStart: Math.ceil(this.size / 2) - 1,
+      xBStart: 0,
+      xLen: Math.ceil(this.size / 2),
+      yAStart: 0,
+      yBStart: 0,
+      yLen: this.size
+    });
+  }
+
+  private _checkTilesOverlapFromBottom(tile: Tile): boolean {
+    return this._checkTilesOverlap(tile, {
+      xAStart: 0,
+      xBStart: 0,
+      xLen: this.size,
+      yAStart: Math.ceil(this.size / 2) - 1,
+      yBStart: 0,
+      yLen: Math.ceil(this.size / 2)
+    });
+  }
+
+  private _checkTilesOverlapFromLeft(tile: Tile): boolean {
+    return this._checkTilesOverlap(tile, {
+      xAStart: 0,
+      xBStart: Math.ceil(this.size / 2) - 1,
+      xLen: Math.ceil(this.size / 2),
+      yAStart: 0,
+      yBStart: 0,
+      yLen: this.size
+    });
+  }
+
+  private _checkTilesOverlap(tile: Tile, { xAStart, yAStart, xBStart, yBStart, xLen, yLen }: TileOverlappingParams): boolean {
+    for (let y = 0; y < yLen; y++) {
+      for (let x = 0; x < xLen; x++) {
+        const xA = xAStart + x;
+        const yA = yAStart + y;
+        
+        const xB = xBStart + x;
+        const yB = yBStart + y;
+
+        const pixelA = this.data[yA * this.size + xA];
+        const pixelB = tile.data[yB * this.size + xB];
+
+        if (!pixelA.equals(pixelB)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
 }

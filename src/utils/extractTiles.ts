@@ -35,5 +35,9 @@ export const extractTiles = ({ data, height, width}: ImageData, tileSize: number
     }
   }
 
+  for (const tile of tiles) {
+    tile.fillNeighbors(tiles);
+  }
+
   return tiles;
 }
