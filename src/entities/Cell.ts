@@ -12,6 +12,25 @@ export class Cell {
     this.options = [...tiles];
   }
 
+  collapse(tileIndex: number): void {
+    if (this.collapsed) {
+      throw new Error('Cell is already collapsed');
+    }
+
+    if (this.options.length === 0) {
+      throw new Error('Cell has no options');
+    }
+
+    const tile = this.options[tileIndex];
+    if (!tile) {
+      throw new Error('Tile not found');
+    }
+
+    this.options.splice(0, this.options.length, tile);
+
+    this.collapsed = true;
+  }
+
   getCollapsedTile(): Tile {
     if (this.collapsed) {
       return this.options[0];
