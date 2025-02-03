@@ -1,9 +1,11 @@
 import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
+import { Cell } from '../entities/Cell';
+import { Grid } from '../entities/Grid';
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
-import { Grid, useWFCGrid } from '../hooks/useWFCGrid';
+import { useWFCGrid } from '../hooks/useWFCGrid';
 import Panel from './Panel';
 
 const WIDTH = 20;
@@ -72,7 +74,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
       }
     }
 
-    grid.forEach((cell, x, y) => {
+    grid.forEach((cell: Cell, x: number, y: number) => {
       const pixel = cell.collapsed ? cell.getPixel() : new Pixel(0, Math.round(cell.options.length / tiles.length * 200), 0);
 
       context.fillStyle = pixel.getColor();
