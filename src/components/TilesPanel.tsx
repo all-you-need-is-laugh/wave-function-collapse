@@ -13,6 +13,14 @@ const StyledLabel = styled.label`
   display: inline-block;
 `;
 
+const StyledTile = styled.img`
+  width: 28px;
+  margin-right: 5px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 1px dashed black;
+`;
+
 interface TilesPanelProps {
   tiles: Tile[];
 }
@@ -23,10 +31,10 @@ const TilesDebug = ({ tiles }: TilesPanelProps) => (
       tiles.map((tile, index) => (
         <div key={index}>
           <div>Tile {index}</div>
-          <StyledLabel>Top:</StyledLabel><TileSet tiles={[tile, ...tile.topNeighbors]} /><br />
-          <StyledLabel>Right:</StyledLabel><TileSet tiles={[tile, ...tile.rightNeighbors]} /><br />
-          <StyledLabel>Bottom:</StyledLabel><TileSet tiles={[tile, ...tile.bottomNeighbors]} /><br />
-          <StyledLabel>Left:</StyledLabel><TileSet tiles={[tile, ...tile.leftNeighbors]} />
+          <StyledLabel>Top:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.topNeighbors} /><br />
+          <StyledLabel>Right:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.rightNeighbors} /><br />
+          <StyledLabel>Bottom:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.bottomNeighbors} /><br />
+          <StyledLabel>Left:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.leftNeighbors} />
         </div>
       ))
     }
