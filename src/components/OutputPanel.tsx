@@ -96,14 +96,14 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
     })
   }, [tiles.length]);
 
-  const { actionExecutor } = useWFCGrid({
+  const { stepExecutor } = useWFCGrid({
     width: WIDTH,
     height: HEIGHT,
     tiles,
     onStep: drawGrid,
   });
 
-  const { isRunning, start, stop } = useIntervalExecution(actionExecutor, 1000);
+  const { isRunning, start, stop } = useIntervalExecution(stepExecutor, 1000);
 
   return (
     <OutputPanelStyled>
@@ -116,7 +116,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
             <Button onClick={isRunning ? stop : start}>
               {isRunning ? 'Stop Execution' : 'Start Execution'}
             </Button>
-            <StepButton onClick={actionExecutor} disabled={isRunning}>
+            <StepButton onClick={stepExecutor} disabled={isRunning}>
               Step
             </StepButton>
           </ButtonContainer>

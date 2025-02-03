@@ -228,7 +228,7 @@ export class Grid {
 // }
 
 interface WFCGridHookResult {
-  actionExecutor: () => void;
+  stepExecutor: () => void;
 }
 
 interface WFCGridHookParams {
@@ -247,7 +247,7 @@ export const useWFCGrid = ({
   const gridRef = useRef<Grid | null>(null);
   // const actionsRef = useRef<WFCAction[]>([]);
 
-  const actionExecutor = useCallback(() => {
+  const stepExecutor = useCallback(() => {
     let grid = gridRef.current;
     if (!grid) {
       gridRef.current = grid = new Grid(width, height);
@@ -262,5 +262,5 @@ export const useWFCGrid = ({
     onStep(grid);
   }, [onStep, width, height, tiles]);
 
-  return { actionExecutor };
+  return { stepExecutor };
 };
