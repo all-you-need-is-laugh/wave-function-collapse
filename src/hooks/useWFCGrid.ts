@@ -1,7 +1,7 @@
 import Random from 'prando';
 import { useCallback, useRef } from "react";
+import { Pixel } from '../entities/Pixel';
 import { Tile } from "../entities/Tile";
-import { Pixel } from "../utils/Pixel";
 
 const random = new Random(13);
 

@@ -1,9 +1,9 @@
 import { useCallback, useRef } from 'react';
 import styled from 'styled-components';
+import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
 import { Grid, useWFCGrid } from '../hooks/useWFCGrid';
-import { Pixel } from '../utils/Pixel';
 import Panel from './Panel';
 
 const WIDTH = 20;

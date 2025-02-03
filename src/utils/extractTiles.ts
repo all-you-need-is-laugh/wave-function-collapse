@@ -1,5 +1,5 @@
+import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
-import { Pixel } from './Pixel';
 
 const areTilesEqual = (tile1: Tile, tile2: Tile): boolean => {
   return tile1.data.every((pixel, index) => 

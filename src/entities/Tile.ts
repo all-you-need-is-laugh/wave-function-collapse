@@ -1,4 +1,4 @@
-import { Pixel } from "../utils/Pixel";
+import { Pixel } from "./Pixel";
 
 interface TileOverlappingParams {
   xAStart: number,
