@@ -54,11 +54,38 @@ interface OutputPanelProps {
   tiles: Tile[];
 }
 
+function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: number) {
+  grid.forEach((cell: Cell, x: number, y: number) => {
+    const pixel = cell.collapsed ? cell.getPixel() : new Pixel(0, Math.round(cell.options.length / maxOptions * 200), 0);
+
+    context.fillStyle = pixel.getColor();
+    context.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+    // add border
+    context.strokeStyle = 'black';
+    context.lineWidth = 0.2;
+    context.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+    if (cell.options.length > 1) {
+      // choose contrast color
+      const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
+      context.fillStyle = luminance > 0.5 ? 'black' : 'white';
+
+      // set font size
+      context.font = `${CELL_SIZE * 0.7}px monospace`;
+      context.textAlign = 'center';
+
+      // add number in that rect
+      context.fillText(cell.options.length.toString(), x * CELL_SIZE + CELL_SIZE / 2, y * CELL_SIZE + CELL_SIZE * 0.7);
+    }
+  });
+}
+
 export function OutputPanel({ tiles }: OutputPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  const drawGrid = useCallback((grid: Grid) => {
+  const onStep = useCallback((grid: Grid) => {
     const canvas = canvasRef.current;
 
     if (!canvas) {
@@ -74,35 +101,14 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
       }
     }
 
-    grid.forEach((cell: Cell, x: number, y: number) => {
-      const pixel = cell.collapsed ? cell.getPixel() : new Pixel(0, Math.round(cell.options.length / tiles.length * 200), 0);
-
-      context.fillStyle = pixel.getColor();
-      context.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-      // add border
-      context.strokeStyle = 'black';
-      context.lineWidth = 0.2;
-      context.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-      // choose contrast color
-      const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
-      context.fillStyle = luminance > 0.5 ? 'black' : 'white';
-
-      // set font size
-      context.font = `${CELL_SIZE * 0.7}px monospace`;
-      context.textAlign = 'center';
-
-      // add number in that rect
-      context.fillText(cell.options.length.toString(), x * CELL_SIZE + CELL_SIZE / 2, y * CELL_SIZE + CELL_SIZE * 0.7);
-    })
+    drawGrid(context, grid, tiles.length);
   }, [tiles.length]);
 
   const { stepExecutor } = useWFCGrid({
     width: WIDTH,
     height: HEIGHT,
     tiles,
-    onStep: drawGrid,
+    onStep,
   });
 
   const { isRunning, start, stop } = useIntervalExecution(stepExecutor, 1000);
