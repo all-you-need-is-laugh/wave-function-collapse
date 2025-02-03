@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
@@ -110,6 +110,8 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
     tiles,
     onStep,
   });
+
+  useEffect(stepExecutor, [stepExecutor]);
 
   const { isRunning, start, stop } = useIntervalExecution(stepExecutor, 1000);
 
