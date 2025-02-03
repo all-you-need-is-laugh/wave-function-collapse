@@ -15,10 +15,12 @@ export class Tile {
   readonly rightNeighbors: Tile[] = [];
   readonly bottomNeighbors: Tile[] = [];
   readonly leftNeighbors: Tile[] = [];
+
+  private _url: string = "";
   
   constructor(
-    public size: number,
-    public data: Pixel[]
+    public readonly size: number,
+    public readonly data: Pixel[]
   ) {}
 
   fillNeighbors(tiles: Tile[]): void {
@@ -48,6 +50,43 @@ export class Tile {
         this.leftNeighbors.push(tile);
       }
     }
+  }
+
+  get url(): string {
+    if (!this._url) {
+      this._url = this._generateUrl();
+    }
+
+    return this._url;
+  }
+
+  private _generateUrl(): string {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      throw new Error("Canvas 2d context is not supported");
+    }
+
+    canvas.width = this.size;
+    canvas.height = this.size;
+
+    const imageData = context.createImageData(this.size, this.size);
+    const data = imageData.data;
+
+    for (let i = 0; i < this.size * this.size; i++) {
+      const pixel = this.data[i];
+      const j = i * 4;
+
+      data[j] = pixel.r;
+      data[j + 1] = pixel.g;
+      data[j + 2] = pixel.b;
+      data[j + 3] = 255;
+    }
+
+    context.putImageData(imageData, 0, 0);
+
+    return canvas.toDataURL();
   }
 
   private _checkTilesOverlapFromTop(tile: Tile): boolean {
