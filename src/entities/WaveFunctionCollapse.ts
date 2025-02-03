@@ -60,8 +60,10 @@ export class WaveFunctionCollapse {
   private _collapseWithMinEntropy(): void {
     const entropyGroups = new Map<number, Cell[]>();
 
+    let collapsedCount = 0;
     this._grid.forEach((cell: Cell) => {
       if (cell.collapsed) {
+        collapsedCount++;
         return;
       }
 
@@ -74,6 +76,11 @@ export class WaveFunctionCollapse {
 
       group.push(cell);
     });
+
+    if (collapsedCount === this._grid.width * this._grid.height) {
+      console.log('All cells are collapsed!');
+      return;
+    }
 
     const minEntropy = Math.min(...entropyGroups.keys());
     const minEntropyGroup = entropyGroups.get(minEntropy);
