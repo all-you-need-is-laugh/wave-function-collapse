@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { WFCStep } from "../entities/WaveFunctionCollapse";
+import { WFCStep } from '../entities/WFCStep';
 
 interface WFCStepBlockProps {
   step: WFCStep;

@@ -1,30 +1,9 @@
 import Random from 'prando';
 import { Cell } from './Cell';
 import { Grid } from './Grid';
+import { WFCStep, WFCStepType } from './WFCStep';
 
 export const random = new Random(54);
-
-enum WFCStepType {
-  CALCULATE_ENTROPY = 'CALCULATE_ENTROPY',
-  COLLAPSE_WITH_MIN_ENTROPY = 'COLLAPSE_WITH_MIN_ENTROPY',
-}
-
-export class WFCStep {
-  private constructor(
-    readonly type: WFCStepType,
-    readonly name: string,
-    readonly x?: number,
-    readonly y?: number
-  ) {}
-
-  static CollapseWithMinEntropy(): WFCStep {
-    return new WFCStep(WFCStepType.COLLAPSE_WITH_MIN_ENTROPY, 'Collapse min');
-  }
-
-  static CalculateEntropy(x: number, y: number): WFCStep {
-    return new WFCStep(WFCStepType.CALCULATE_ENTROPY, `Calculate entropy [${x}, ${y}]`, x, y);
-  }
-}
 
 export class WaveFunctionCollapse {
   readonly executedSteps: WFCStep[] = [];

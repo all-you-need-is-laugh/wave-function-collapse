@@ -4,7 +4,7 @@ import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
-import { WFCStep } from '../entities/WaveFunctionCollapse';
+import { WFCStep } from '../entities/WFCStep';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
 import { useWFCGrid } from '../hooks/useWFCGrid';
 import Panel from './Panel';

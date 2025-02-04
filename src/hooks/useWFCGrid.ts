@@ -2,7 +2,8 @@ import { useCallback, useRef } from "react";
 import { Cell } from "../entities/Cell";
 import { Grid } from "../entities/Grid";
 import { Tile } from "../entities/Tile";
-import { WaveFunctionCollapse, WFCStep } from "../entities/WaveFunctionCollapse";
+import { WaveFunctionCollapse } from "../entities/WaveFunctionCollapse";
+import { WFCStep } from '../entities/WFCStep';
 
 interface WFCGridHookResult {
   stepExecutor: () => void;
