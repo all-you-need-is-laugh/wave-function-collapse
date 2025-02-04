@@ -4,12 +4,19 @@ import { Grid } from './Grid';
 
 export const random = new Random(54);
 
-enum WFCStepName {
+enum WFCStepType {
   COLLAPSE_WITH_MIN_ENTROPY = 'COLLAPSE_WITH_MIN_ENTROPY',
 }
 
-export interface WFCStep {
-  name: WFCStepName;
+export class WFCStep {
+  private constructor(
+    readonly type: WFCStepType,
+    readonly name: string,
+  ) {}
+
+  static CollapseWithMinEntropy(): WFCStep {
+    return new WFCStep(WFCStepType.COLLAPSE_WITH_MIN_ENTROPY, 'Collapse min');
+  }
 }
 
 export class WaveFunctionCollapse {
@@ -40,20 +47,18 @@ export class WaveFunctionCollapse {
   }
 
   private _startIteration(): void {
-    this.pendingSteps.push({
-      name: WFCStepName.COLLAPSE_WITH_MIN_ENTROPY
-    });
+    this.pendingSteps.push(WFCStep.CollapseWithMinEntropy());
     this.executedSteps.length = 0;
   }
 
   private _handleStep(step: WFCStep): void {
-    switch (step.name) {
-      case WFCStepName.COLLAPSE_WITH_MIN_ENTROPY:
+    switch (step.type) {
+      case WFCStepType.COLLAPSE_WITH_MIN_ENTROPY:
         this._collapseWithMinEntropy();
         break;
       
       default:
-        throw new Error(`Unknown step name: ${step.name}`);
+        throw new Error(`Unknown step name: ${step.type}`);
     }
   }
 

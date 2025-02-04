@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
 import { Tile } from "../entities/Tile";
-import { WaveFunctionCollapse } from "../entities/WaveFunctionCollapse";
+import { WaveFunctionCollapse, WFCStep } from "../entities/WaveFunctionCollapse";
 
 interface WFCGridHookResult {
   stepExecutor: () => void;
@@ -12,7 +12,7 @@ interface WFCGridHookParams {
   width: number;
   height: number;
   tiles: Tile[],
-  onStep: (grid: Grid) => void
+  onStep: (grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => void
 }
 
 export const useWFCGrid = ({
@@ -25,6 +25,10 @@ export const useWFCGrid = ({
   const wfcRef = useRef<WaveFunctionCollapse | null>(null);
 
   const stepExecutor = useCallback(() => {
+    if (!tiles.length) {
+      return;
+    }
+
     let grid = gridRef.current;
     if (!grid) {
       gridRef.current = grid = new Grid(width, height);
@@ -39,11 +43,11 @@ export const useWFCGrid = ({
     let wfc = wfcRef.current;
     if (!wfc) {
       wfcRef.current = wfc = new WaveFunctionCollapse(grid);
+    } else {
+      wfc.step();
     }
 
-    wfc.step();
-
-    onStep(grid);
+    onStep(grid, wfc.executedSteps, wfc.pendingSteps);
   }, [onStep, width, height, tiles]);
 
   return { stepExecutor };

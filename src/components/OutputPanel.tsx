@@ -4,6 +4,7 @@ import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
+import { WFCStep } from '../entities/WaveFunctionCollapse';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
 import { useWFCGrid } from '../hooks/useWFCGrid';
 import Panel from './Panel';
@@ -85,7 +86,8 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  const onStep = useCallback((grid: Grid) => {
+  const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
+    console.warn("### > onStep >", grid, executedSteps, pendingSteps, tiles.length, canvasRef.current);
     const canvas = canvasRef.current;
 
     if (!canvas) {
