@@ -66,17 +66,20 @@ interface OutputPanelProps {
   tiles: Tile[];
 }
 
-function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: number) {
+function drawBorder(context: CanvasRenderingContext2D, x: number, y: number, color: string, lineWidth: number) {
+  context.strokeStyle = color;
+  context.lineWidth = lineWidth;
+  context.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+}
+
+function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: number, executedStep: WFCStep | undefined, pendingStep: WFCStep | undefined) {
   grid.forEach((cell: Cell, x: number, y: number) => {
     const pixel = cell.collapsed ? cell.getPixel() : new Pixel(0, Math.round(cell.options.length / maxOptions * 200), 0);
 
     context.fillStyle = pixel.getColor();
     context.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
-    // add border
-    context.strokeStyle = 'black';
-    context.lineWidth = 0.2;
-    context.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    drawBorder(context, x, y, 'black', 0.2);
 
     if (cell.options.length > 1) {
       // choose contrast color
@@ -91,6 +94,20 @@ function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: num
       context.fillText(cell.options.length.toString(), x * CELL_SIZE + CELL_SIZE / 2, y * CELL_SIZE + CELL_SIZE * 0.7);
     }
   });
+
+  if (executedStep) {
+    const { x, y } = executedStep;
+    if (x !== undefined && y !== undefined) {
+      drawBorder(context, x, y, 'yellow', 2);
+    }
+  }
+
+  if (pendingStep) {
+    const { x, y } = pendingStep;
+    if (x !== undefined && y !== undefined) {
+      drawBorder(context, x, y, 'orange', 2);
+    }
+  }
 }
 
 export function OutputPanel({ tiles }: OutputPanelProps) {
@@ -118,7 +135,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
       }
     }
 
-    drawGrid(context, grid, tiles.length);
+    drawGrid(context, grid, tiles.length, executedSteps[executedSteps.length - 1], pendingSteps[0]);
   }, [tiles.length]);
 
   const { stepExecutor } = useWFCGrid({
