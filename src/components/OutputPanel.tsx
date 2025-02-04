@@ -19,6 +19,7 @@ const OutputPanelStyled = styled(Panel)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 150%;
 `;
 
 const Loader = styled.div`
@@ -39,7 +40,7 @@ const StepsContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   gap: 10px;
-  min-width: 120px;
+  min-width: 160px;
 `;
 
 const Button = styled.button`

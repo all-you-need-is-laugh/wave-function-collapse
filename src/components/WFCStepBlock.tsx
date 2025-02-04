@@ -7,10 +7,14 @@ interface WFCStepBlockProps {
 }
 
 const Badge = styled.div<{ $done: boolean }>`
-  padding: 10px;
+  width: 160px;
+  padding: 5px 10px;
   border-radius: 12px;
+  border: 1px solid ${props => (props.$done ? 'darkgreen' : 'darkblue')};
   background-color: ${props => (props.$done ? 'green' : 'skyblue')};
-  color: black;
+  color: ${props => (props.$done ? 'white' : 'black')};
+  font-size: 14px;
+  text-align: center;
 `;
 
 export function WFCStepBlock({ step, done = false }: WFCStepBlockProps) {
