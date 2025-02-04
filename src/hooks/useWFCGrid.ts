@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
-import { Cell } from '../entities/Cell';
-import { Grid } from '../entities/Grid';
+import { Cell } from "../entities/Cell";
+import { Grid } from "../entities/Grid";
 import { Tile } from "../entities/Tile";
 import { WaveFunctionCollapse, WFCStep } from "../entities/WaveFunctionCollapse";
 
@@ -47,7 +47,7 @@ export const useWFCGrid = ({
       wfc.step();
     }
 
-    onStep(grid, wfc.executedSteps, wfc.pendingSteps);
+    onStep(grid, [...wfc.executedSteps], [...wfc.pendingSteps]);
   }, [onStep, width, height, tiles]);
 
   return { stepExecutor };
