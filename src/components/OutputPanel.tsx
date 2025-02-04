@@ -100,7 +100,6 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
 
   const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
-    console.warn("### > onStep >", grid, executedSteps, pendingSteps, tiles.length, canvasRef.current);
     setExecutedSteps(executedSteps);
     setPendingSteps(pendingSteps);
 
@@ -136,36 +135,30 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
   return (
     <OutputPanelStyled>
       <h2>Output</h2>
-      {tiles.length === 0 ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <RowContainer>
-          <StepsContainer>
-            <ExecutionButton onClick={isRunning ? stop : start}>
-              {isRunning ? 'Stop Execution' : 'Start Execution'}
-            </ExecutionButton>
-            <Button onClick={stepExecutor} disabled={isRunning}>
-              Step
-            </Button>
-            <div>{
-              executedSteps.map((step, index) => (
-                <WFCStepBlock key={index} step={step} done={true} />
-              ))
-            }</div>
-            <div>{
-              pendingSteps.map((step, index) => (
-                <WFCStepBlock key={index} step={step} />
-              ))
-            }</div>
-          </StepsContainer>
-          <Canvas
-            ref={canvasRef}
-            width={WIDTH * CELL_SIZE}
-            height={HEIGHT * CELL_SIZE}
-          />
-        </RowContainer>
-      )}
-    </OutputPanelStyled>
+      {
+        tiles.length === 0 ? (
+          <Loader>Loading...</Loader>
+        ) : (
+          <RowContainer>
+            <StepsContainer>
+              <ExecutionButton onClick={isRunning ? stop : start}>
+                {isRunning ? 'Stop Execution' : 'Start Execution'}
+              </ExecutionButton>
+              <Button onClick={stepExecutor} disabled={isRunning}>
+                Step
+              </Button>
+              {executedSteps.map((step, index) => <WFCStepBlock key={index} step={step} done={true} />)}
+              {pendingSteps.map((step, index) => <WFCStepBlock key={index} step={step} />)}
+            </StepsContainer>
+            <Canvas
+              ref={canvasRef}
+              width={WIDTH * CELL_SIZE}
+              height={HEIGHT * CELL_SIZE}
+            />
+          </RowContainer>
+        )
+      }
+    </OutputPanelStyled >
   );
 }
 
