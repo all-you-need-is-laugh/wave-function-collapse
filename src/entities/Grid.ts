@@ -20,6 +20,23 @@ export class Grid {
     this._cells[this._index(x, y)] = cell;
   }
 
+  getCoordinates(targetCell: Cell): { x: number, y: number } {
+    let result: { x: number, y: number } | undefined;
+
+    this.forEach((cell, x, y) => {
+      if (targetCell === cell) {
+        result = { x, y };
+        return false;
+      }
+    });
+
+    if (!result) {
+      throw new Error('Cell not found');
+    }
+
+    return result;
+  }
+
   fill(callback: (x: number, y: number) => Cell): void {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -28,10 +45,15 @@ export class Grid {
     }
   }
 
-  forEach(callback: (cell: Cell, x: number, y: number) => void): void {
+  forEach(callback: (cell: Cell, x: number, y: number) => boolean | void): void {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        callback(this.get(x, y), x, y);
+        const result = callback(this.get(x, y), x, y);
+
+        // stop iteration if callback returns false
+        if (result === false) {
+          return;
+        }
       }
     }
   }

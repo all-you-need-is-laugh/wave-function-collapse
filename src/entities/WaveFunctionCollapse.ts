@@ -5,6 +5,7 @@ import { Grid } from './Grid';
 export const random = new Random(54);
 
 enum WFCStepType {
+  CALCULATE_ENTROPY = 'CALCULATE_ENTROPY',
   COLLAPSE_WITH_MIN_ENTROPY = 'COLLAPSE_WITH_MIN_ENTROPY',
 }
 
@@ -12,10 +13,16 @@ export class WFCStep {
   private constructor(
     readonly type: WFCStepType,
     readonly name: string,
+    readonly x?: number,
+    readonly y?: number
   ) {}
 
   static CollapseWithMinEntropy(): WFCStep {
     return new WFCStep(WFCStepType.COLLAPSE_WITH_MIN_ENTROPY, 'Collapse min');
+  }
+
+  static CalculateEntropy(x: number, y: number): WFCStep {
+    return new WFCStep(WFCStepType.CALCULATE_ENTROPY, `Calculate entropy [${x}, ${y}]`, x, y);
   }
 }
 
@@ -30,13 +37,12 @@ export class WaveFunctionCollapse {
   }
 
   step(): void {
-    
     if (this.pendingSteps.length === 0) {
       this._startIteration();
     }
     
     const step = this.pendingSteps.shift();
-    console.warn("### > WaveFunctionCollapse > step!", step);
+    console.log("### > WaveFunctionCollapse > step!", step);
     if (!step) {
       throw new Error('No pending steps');
   }
@@ -55,7 +61,11 @@ export class WaveFunctionCollapse {
     switch (step.type) {
       case WFCStepType.COLLAPSE_WITH_MIN_ENTROPY:
         this._collapseWithMinEntropy();
-        break;
+        return;
+
+      case WFCStepType.CALCULATE_ENTROPY:
+        this._calculateEntropy(step.x, step.y);
+        return;
       
       default:
         throw new Error(`Unknown step name: ${step.type}`);
@@ -96,5 +106,32 @@ export class WaveFunctionCollapse {
     const cell = random.nextArrayItem(minEntropyGroup);
     const tileIndexToCollapse = random.nextInt(0, cell.options.length - 1);
     cell.collapse(tileIndexToCollapse);
+
+    const {x, y} = this._grid.getCoordinates(cell);
+
+    // top neighbor
+    if (x > 0) {
+      this.pendingSteps.push(WFCStep.CalculateEntropy(x - 1, y));
+    }
+
+    // right neighbor
+    if (y < this._grid.height - 1) {
+      this.pendingSteps.push(WFCStep.CalculateEntropy(x, y + 1));
+    }
+
+    // bottom neighbor
+    if (x < this._grid.width - 1) {
+      this.pendingSteps.push(WFCStep.CalculateEntropy(x + 1, y));
+    }
+
+    // left neighbor
+    if (y > 0) {
+      this.pendingSteps.push(WFCStep.CalculateEntropy(x, y - 1));
+    }
+  }
+  private _calculateEntropy(x?: number, y?: number): void {
+    if (x === undefined || y === undefined) {
+      throw new Error('Coordinates are not provided');
+    }
   }
 }
