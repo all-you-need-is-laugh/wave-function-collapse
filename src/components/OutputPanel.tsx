@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
@@ -8,6 +8,7 @@ import { WFCStep } from '../entities/WaveFunctionCollapse';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
 import { useWFCGrid } from '../hooks/useWFCGrid';
 import Panel from './Panel';
+import { WFCStepBlock } from './WFCStepBlock';
 
 const WIDTH = 20;
 const HEIGHT = 25;
@@ -20,22 +21,37 @@ const OutputPanelStyled = styled(Panel)`
   align-items: center;
 `;
 
-const BaseButton = styled.button`
+const Loader = styled.div`
+  margin-top: 20px;
+  font-size: 18px;
+  color: #555;
+`;
+
+const RowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+`;
+
+const StepsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 120px;
+`;
+
+const Button = styled.button`
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
 `;
 
-const Button = styled(BaseButton)`
-  margin-bottom: 20px;
-`;
-
-const StepButton = styled(BaseButton)``;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 10px;
+const ExecutionButton = styled(Button)`
+  font-size: 14px;
 `;
 
 const Canvas = styled.canvas`
@@ -43,12 +59,7 @@ const Canvas = styled.canvas`
   height: auto;
   object-fit: contain;
   image-rendering: pixelated;
-`;
-
-const Loader = styled.div`
-  margin-top: 20px;
-  font-size: 18px;
-  color: #555;
+  flex-shrink: 0; /* Prevent canvas from shrinking */
 `;
 
 interface OutputPanelProps {
@@ -85,9 +96,14 @@ function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: num
 export function OutputPanel({ tiles }: OutputPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
+  const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
 
   const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
     console.warn("### > onStep >", grid, executedSteps, pendingSteps, tiles.length, canvasRef.current);
+    setExecutedSteps(executedSteps);
+    setPendingSteps(pendingSteps);
+
     const canvas = canvasRef.current;
 
     if (!canvas) {
@@ -123,21 +139,31 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
       {tiles.length === 0 ? (
         <Loader>Loading...</Loader>
       ) : (
-        <>
-          <ButtonContainer>
-            <Button onClick={isRunning ? stop : start}>
+        <RowContainer>
+          <StepsContainer>
+            <ExecutionButton onClick={isRunning ? stop : start}>
               {isRunning ? 'Stop Execution' : 'Start Execution'}
-            </Button>
-            <StepButton onClick={stepExecutor} disabled={isRunning}>
+            </ExecutionButton>
+            <Button onClick={stepExecutor} disabled={isRunning}>
               Step
-            </StepButton>
-          </ButtonContainer>
+            </Button>
+            <div>{
+              executedSteps.map((step, index) => (
+                <WFCStepBlock key={index} step={step} done={true} />
+              ))
+            }</div>
+            <div>{
+              pendingSteps.map((step, index) => (
+                <WFCStepBlock key={index} step={step} />
+              ))
+            }</div>
+          </StepsContainer>
           <Canvas
             ref={canvasRef}
             width={WIDTH * CELL_SIZE}
             height={HEIGHT * CELL_SIZE}
           />
-        </>
+        </RowContainer>
       )}
     </OutputPanelStyled>
   );
