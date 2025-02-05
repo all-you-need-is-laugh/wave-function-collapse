@@ -122,7 +122,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
-  const [intervalMs, setIntervalMs] = useState(1000);
+  const [intervalMs, setIntervalMs] = useState(100);
 
   const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
     setExecutedSteps(executedSteps);
@@ -170,7 +170,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
                 type="number"
                 value={intervalMs}
                 onChange={(e) => setIntervalMs(Number(e.target.value))}
-                min="1"
+                min="0"
                 step="100"
               />
               <ExecutionButton onClick={isRunning ? stop : start}>
