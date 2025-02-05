@@ -143,6 +143,13 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
 
   const { isRunning, start, stop } = useIntervalExecution(stepExecutor, intervalMs);
 
+  useEffect(() => {
+    // Cleanup interval when tiles change
+    return () => {
+      stop();
+    }
+  }, [tiles]);
+
   return (
     <RowContainer>
       <StepsContainer>

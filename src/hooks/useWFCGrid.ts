@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Cell } from "../entities/Cell";
 import { Grid } from "../entities/Grid";
 import { Tile } from "../entities/Tile";
@@ -24,6 +24,14 @@ export const useWFCGrid = ({
 }: WFCGridHookParams): WFCGridHookResult => {
   const gridRef = useRef<Grid | null>(null);
   const wfcRef = useRef<WaveFunctionCollapse | null>(null);
+
+  useEffect(() => {
+    // Cleanup grid and wfc instances when tiles change
+    return () => {
+      gridRef.current = null;
+      wfcRef.current = null;
+    }
+  }, [tiles]);
 
   const stepExecutor = useCallback(() => {
     if (!tiles.length) {
