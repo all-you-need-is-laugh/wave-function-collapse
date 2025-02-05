@@ -1,6 +1,7 @@
 import Random from 'prando';
 import { Cell } from './Cell';
 import { Grid } from './Grid';
+import { Tile } from './Tile';
 import { WFCStep, WFCStepType } from './WFCStep';
 
 export const random = new Random(54);
@@ -9,7 +10,7 @@ export class WaveFunctionCollapse {
   readonly executedSteps: WFCStep[] = [];
   readonly pendingSteps: WFCStep[] = [];
 
-  constructor (
+  constructor(
     private readonly _grid: Grid
   ) {
     this._startIteration();
@@ -19,12 +20,12 @@ export class WaveFunctionCollapse {
     if (this.pendingSteps.length === 0) {
       this._startIteration();
     }
-    
+
     const step = this.pendingSteps.shift();
-    console.log("### > WaveFunctionCollapse > step!", step);
+    // console.log("### > WaveFunctionCollapse > step!", step);
     if (!step) {
       throw new Error('No pending steps');
-  }
+    }
 
     this._handleStep(step);
 
@@ -49,7 +50,7 @@ export class WaveFunctionCollapse {
       case WFCStepType.CALCULATE_ENTROPY:
         this._calculateEntropy(step.x, step.y);
         return;
-      
+
       default:
         throw new Error(`Unknown step name: ${step.type}`);
     }
@@ -87,7 +88,7 @@ export class WaveFunctionCollapse {
     }
 
     const cell = random.nextArrayItem(minEntropyGroup);
-    const {x, y} = this._grid.getCoordinates(cell);
+    const { x, y } = this._grid.getCoordinates(cell);
 
     this.pendingSteps.push(WFCStep.Collapse(x, y));
   }
@@ -99,8 +100,13 @@ export class WaveFunctionCollapse {
 
     const cell = this._grid.get(x, y);
     const tileIndexToCollapse = random.nextInt(0, cell.options.length - 1);
+    // consoleTile(cell.options[tileIndexToCollapse], `collapsed [${x}, ${y}] with tile`);
     cell.collapse(tileIndexToCollapse);
 
+    this._propagateEntropyCalculation(x, y);
+  }
+
+  private _propagateEntropyCalculation(x: number, y: number) {
     // top neighbor
     if (y > 0) {
       this.pendingSteps.push(WFCStep.CalculateEntropy(x, y - 1));
@@ -110,7 +116,7 @@ export class WaveFunctionCollapse {
     if (x < this._grid.width - 1) {
       this.pendingSteps.push(WFCStep.CalculateEntropy(x + 1, y));
     }
-    
+
     // bottom neighbor
     if (y < this._grid.height - 1) {
       this.pendingSteps.push(WFCStep.CalculateEntropy(x, y + 1));
@@ -126,5 +132,70 @@ export class WaveFunctionCollapse {
     if (x === undefined || y === undefined) {
       throw new Error('Coordinates are not provided');
     }
+
+    const cell = this._grid.get(x, y);
+
+    if (cell.collapsed) {
+      return;
+    }
+
+    const startOptionsLength = cell.options.length;
+    let availableOptions = [...cell.options];
+    // console.log("### > _calculateEntropy > cell.options:", cell.options);
+
+    // check top neighbor
+    if (y > 0) {
+      availableOptions = this._filterByNeighbor(this._grid.get(x, y - 1), availableOptions, tile => tile.bottomNeighbors);
+      // console.log("### > _calculateEntropy > availableOptions [top]", availableOptions);
+    }
+
+    // check right neighbor
+    if (x < this._grid.width - 1) {
+      availableOptions = this._filterByNeighbor(this._grid.get(x + 1, y), availableOptions, tile => tile.leftNeighbors);
+      // console.log("### > _calculateEntropy > availableOptions [right]", availableOptions);
+    }
+
+    // check bottom neighbor
+    if (y < this._grid.height - 1) {
+      availableOptions = this._filterByNeighbor(this._grid.get(x, y + 1), availableOptions, tile => tile.topNeighbors);
+      // console.log("### > _calculateEntropy > availableOptions [bottom]", availableOptions);
+    }
+
+    // check left neighbor
+    if (x > 0) {
+      availableOptions = this._filterByNeighbor(this._grid.get(x - 1, y), availableOptions, tile => tile.rightNeighbors);
+      // console.log("### > _calculateEntropy > availableOptions [left]", availableOptions);
+    }
+
+    cell.options.splice(0, cell.options.length, ...availableOptions);
+
+    if (cell.options.length < 2) {
+      this.pendingSteps.unshift(WFCStep.Collapse(x, y));
+    }
+
+    if (startOptionsLength !== cell.options.length) {
+      this._propagateEntropyCalculation(x, y);
+    }
+  }
+
+  private _filterByNeighbor(neighborCell: Cell, originalOptions: Tile[], neighborsFieldGetter: (tile: Tile) => Tile[]): Tile[] {
+    // console.group(neighborsFieldGetter, neighborCell.options.length);
+
+    const availableOptionSet = neighborCell.options.reduce((accumulator, option) => {
+      // consoleTile(option, 'option');
+
+      for (const tile of neighborsFieldGetter(option)) {
+        // consoleTile(tile, `neigbor's tile; available: ${originalOptions.includes(tile)}`);
+
+        if (originalOptions.includes(tile)) {
+          accumulator.add(tile);
+        }
+      }
+      return accumulator;
+    }, new Set<Tile>());
+
+    // console.groupEnd();
+
+    return [...availableOptionSet];
   }
 }
