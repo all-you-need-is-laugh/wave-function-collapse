@@ -166,7 +166,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
         ) : (
           <RowContainer>
             <StepsContainer>
-              <IntervalInput
+              Auto-execution interval <IntervalInput
                 type="number"
                 value={intervalMs}
                 onChange={(e) => setIntervalMs(Number(e.target.value))}
@@ -174,12 +174,13 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
                 step="100"
               />
               <ExecutionButton onClick={isRunning ? stop : start}>
-                {isRunning ? 'Stop Execution' : 'Start Execution'}
+                {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
               </ExecutionButton>
               <Button onClick={stepExecutor} disabled={isRunning}>
-                Step
+                Execute a step
               </Button>
               <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
+              <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />
               {/* {executedSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} done={true} />)} */}
               {/* {pendingSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} />)} */}
             </StepsContainer>
