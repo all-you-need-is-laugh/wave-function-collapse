@@ -5,6 +5,8 @@ interface TileSetProps {
   tiles: Tile[];
 }
 
+const MAX_COLUMNS = 12;
+
 const TileSet = ({ tiles }: TileSetProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -18,7 +20,7 @@ const TileSet = ({ tiles }: TileSetProps) => {
       const context = canvas.getContext('2d');
       if (context) {
         const pixelSize = 10;
-        const columns = Math.min(10, Math.ceil(Math.sqrt(tiles.length)));
+        const columns = Math.min(MAX_COLUMNS, Math.ceil(Math.sqrt(tiles.length)));
         const rows = Math.ceil(tiles.length / columns);
         const tileSize = tiles[0].size * pixelSize;
         canvas.width = columns * tileSize;
