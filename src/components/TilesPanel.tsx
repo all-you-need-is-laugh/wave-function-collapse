@@ -5,6 +5,8 @@ import TileSet from './TileSet';
 
 const TilesPanelStyled = styled(Panel)`
   background-color: lightyellow;
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledLabel = styled.label`
@@ -21,12 +23,18 @@ const StyledTile = styled.img`
   border: 1px dashed black;
 `;
 
+const ScrollableTileSet = styled.div`
+  flex-grow: 1;
+  overflow-y: auto;
+`;
+
 interface TilesPanelProps {
   tiles: Tile[];
 }
 
 const TilesDebug = ({ tiles }: TilesPanelProps) => (
   <>
+    <br />
     {
       tiles.map((tile, index) => (
         <div key={index}>
@@ -44,9 +52,10 @@ const TilesDebug = ({ tiles }: TilesPanelProps) => (
 export function TilesPanel({ tiles }: TilesPanelProps) {
   return (
     <TilesPanelStyled>
-      <h2>Tiles</h2>
-      <TileSet tiles={tiles} />
-      <br />
+      <h2>Tiles ({tiles.length})</h2>
+      <ScrollableTileSet>
+        <TileSet tiles={tiles} />
+      </ScrollableTileSet>
       {/* <TilesDebug tiles={tiles} /> */}
     </TilesPanelStyled>
   )
