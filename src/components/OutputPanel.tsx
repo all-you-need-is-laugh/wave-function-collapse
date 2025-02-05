@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Cell } from '../entities/Cell';
 import { Grid } from '../entities/Grid';
-import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 import { WFCStep } from '../entities/WFCStep';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
@@ -73,16 +72,16 @@ function drawBorder(context: CanvasRenderingContext2D, x: number, y: number, col
   context.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 }
 
-function drawGrid(context: CanvasRenderingContext2D, grid: Grid, maxOptions: number, executedStep: WFCStep | undefined, pendingStep: WFCStep | undefined) {
+function drawGrid(context: CanvasRenderingContext2D, grid: Grid, executedStep: WFCStep | undefined, pendingStep: WFCStep | undefined) {
   grid.forEach((cell: Cell, x: number, y: number) => {
-    const pixel = cell.collapsed ? cell.getPixel() : new Pixel(0, Math.round(cell.options.length / maxOptions * 200), 0);
+    const pixel = cell.getPixel();
 
     context.fillStyle = pixel.getColor();
     context.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
     drawBorder(context, x, y, 'black', 0.2);
 
-    if (cell.options.length > 1) {
+    if (!cell.collapsed) {
       // choose contrast color
       const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
       context.fillStyle = luminance > 0.5 ? 'black' : 'white';
@@ -136,8 +135,8 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
       }
     }
 
-    drawGrid(context, grid, tiles.length, executedSteps[executedSteps.length - 1], pendingSteps[0]);
-  }, [tiles.length]);
+    drawGrid(context, grid, executedSteps[executedSteps.length - 1], pendingSteps[0]);
+  }, []);
 
   const { stepExecutor } = useWFCGrid({
     width: WIDTH,
