@@ -10,7 +10,7 @@ import Panel from './Panel';
 import { WFCStepBlock } from './WFCStepBlock';
 
 const WIDTH = 20;
-const HEIGHT = 25;
+const HEIGHT = 20;
 const CELL_SIZE = 20;
 
 const OutputPanelStyled = styled(Panel)`
