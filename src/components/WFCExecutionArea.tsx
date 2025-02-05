@@ -76,7 +76,11 @@ function drawGrid(context: CanvasRenderingContext2D, grid: Grid, executedStep: W
       context.fillStyle = luminance > 0.5 ? 'black' : 'white';
 
       // set font size
-      context.font = `${CELL_SIZE * 0.7}px monospace`;
+      if (cell.options.length.toString().length > 2) {
+        context.font = `${CELL_SIZE * 0.55}px monospace`;
+      } else {
+        context.font = `${CELL_SIZE * 0.7}px monospace`;
+      }
       context.textAlign = 'center';
 
       // add number in that rect
