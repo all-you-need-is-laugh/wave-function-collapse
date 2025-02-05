@@ -34,7 +34,7 @@ export class WaveFunctionCollapse {
 
   private _startIteration(): void {
     this.pendingSteps.push(WFCStep.PickWithMinEntropy());
-    this.executedSteps.length = 0;
+    // this.executedSteps.length = 0;
   }
 
   private _handleStep(step: WFCStep): void {

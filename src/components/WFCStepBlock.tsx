@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { WFCStep } from '../entities/WFCStep';
 
 interface WFCStepBlockProps {
-  step: WFCStep;
+  label: string;
   done?: boolean;
 }
 
@@ -17,10 +16,10 @@ const Badge = styled.div<{ $done: boolean }>`
   text-align: center;
 `;
 
-export function WFCStepBlock({ step, done = false }: WFCStepBlockProps) {
+export function WFCStepBlock({ label, done = false }: WFCStepBlockProps) {
   return (
     <Badge $done={done}>
-      {step.name}
+      {label}
     </Badge>
   );
 }

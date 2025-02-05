@@ -164,8 +164,9 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
               <Button onClick={stepExecutor} disabled={isRunning}>
                 Step
               </Button>
-              {executedSteps.map((step, index) => <WFCStepBlock key={index} step={step} done={true} />)}
-              {pendingSteps.map((step, index) => <WFCStepBlock key={index} step={step} />)}
+              <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
+              {/* {executedSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} done={true} />)} */}
+              {/* {pendingSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} />)} */}
             </StepsContainer>
             <Canvas
               ref={canvasRef}
