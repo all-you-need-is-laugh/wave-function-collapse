@@ -96,7 +96,7 @@ const inputOptiopns = [
 ];
 
 function imageFullPath(selectedImage: string): string {
-  return `/samples/${selectedImage}.png`;
+  return `./samples/${selectedImage}.png`;
 }
 
 export function InputPanel({ onTilesExtracted = () => { } }: InputPanelProps) {
