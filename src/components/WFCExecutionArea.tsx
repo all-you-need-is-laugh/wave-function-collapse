@@ -152,7 +152,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     return () => {
       stop();
     }
-  }, [tiles]);
+  }, [tiles, stop]);
 
   return (
     <RowContainer>
