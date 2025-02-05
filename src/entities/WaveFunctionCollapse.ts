@@ -77,8 +77,7 @@ export class WaveFunctionCollapse {
     });
 
     if (collapsedCount === this._grid.width * this._grid.height) {
-      console.log('All cells are collapsed!');
-      return;
+      throw new Error('All cells are collapsed!');
     }
 
     const minEntropy = Math.min(...entropyGroups.keys());
