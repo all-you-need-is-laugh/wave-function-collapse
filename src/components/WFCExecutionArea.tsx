@@ -167,9 +167,10 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         <ExecutionButton onClick={isRunning ? stop : start}>
           {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
         </ExecutionButton>
-        <Button onClick={stepExecutor} disabled={isRunning}>
-          Execute a step
-        </Button>
+        <Button onClick={stepExecutor} disabled={isRunning}>Execute a step</Button>
+        <br />
+        <br />
+        <br />
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />
         {/* {executedSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} done={true} />)} */}
