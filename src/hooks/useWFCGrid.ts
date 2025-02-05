@@ -13,7 +13,8 @@ interface WFCGridHookParams {
   width: number;
   height: number;
   tiles: Tile[],
-  onStep: (grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => void
+  onStep: (grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => void,
+  seed: number
 }
 
 export const useWFCGrid = ({
@@ -21,6 +22,7 @@ export const useWFCGrid = ({
   height,
   tiles,
   onStep,
+  seed,
 }: WFCGridHookParams): WFCGridHookResult => {
   const gridRef = useRef<Grid | null>(null);
   const wfcRef = useRef<WaveFunctionCollapse | null>(null);
@@ -31,7 +33,7 @@ export const useWFCGrid = ({
       gridRef.current = null;
       wfcRef.current = null;
     }
-  }, [tiles]);
+  }, [tiles, seed]);
 
   const stepExecutor = useCallback(() => {
     if (!tiles.length) {
@@ -51,13 +53,13 @@ export const useWFCGrid = ({
 
     let wfc = wfcRef.current;
     if (!wfc) {
-      wfcRef.current = wfc = new WaveFunctionCollapse(grid);
+      wfcRef.current = wfc = new WaveFunctionCollapse(grid, seed);
     } else {
       wfc.step();
     }
 
     onStep(grid, [...wfc.executedSteps], [...wfc.pendingSteps]);
-  }, [onStep, width, height, tiles]);
+  }, [onStep, width, height, tiles, seed]);
 
   return { stepExecutor };
 };

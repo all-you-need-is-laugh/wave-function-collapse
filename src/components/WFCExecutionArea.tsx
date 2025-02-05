@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Cell } from '../entities/Cell';
@@ -113,6 +112,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
   const [intervalMs, setIntervalMs] = useState(100);
+  const [seed, setSeed] = useState(54);
 
   const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
     setExecutedSteps(executedSteps);
@@ -141,6 +141,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     height: HEIGHT,
     tiles,
     onStep,
+    seed,
   });
 
   useEffect(stepExecutor, [stepExecutor]);
@@ -152,11 +153,15 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     return () => {
       stop();
     }
-  }, [tiles, stop]);
+  }, [stop, tiles, seed]);
 
   return (
     <RowContainer>
       <StepsContainer>
+        <ExecutionButton onClick={isRunning ? stop : start}>
+          {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
+        </ExecutionButton>
+        <Button onClick={stepExecutor} disabled={isRunning}>Execute a step</Button>
         Auto-execution interval <IntervalInput
           type="number"
           value={intervalMs}
@@ -164,12 +169,12 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           min="0"
           step="100"
         />
-        <ExecutionButton onClick={isRunning ? stop : start}>
-          {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
-        </ExecutionButton>
-        <Button onClick={stepExecutor} disabled={isRunning}>Execute a step</Button>
-        <br />
-        <br />
+        Seed <IntervalInput
+          type="number"
+          value={seed}
+          onChange={(e) => setSeed(Number(e.target.value))}
+          min="0"
+        />
         <br />
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />

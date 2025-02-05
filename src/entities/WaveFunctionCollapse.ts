@@ -4,15 +4,16 @@ import { Grid } from './Grid';
 import { Tile } from './Tile';
 import { WFCStep, WFCStepType } from './WFCStep';
 
-export const random = new Random(54);
-
 export class WaveFunctionCollapse {
   readonly executedSteps: WFCStep[] = [];
   readonly pendingSteps: WFCStep[] = [];
+  private readonly _random: Random;
 
   constructor(
-    private readonly _grid: Grid
+    private readonly _grid: Grid,
+    seed: number
   ) {
+    this._random = new Random(seed);
     this._startIteration();
   }
 
@@ -86,7 +87,7 @@ export class WaveFunctionCollapse {
       throw new Error('Min entropy group not found');
     }
 
-    const cell = random.nextArrayItem(minEntropyGroup);
+    const cell = this._random.nextArrayItem(minEntropyGroup);
     const { x, y } = this._grid.getCoordinates(cell);
 
     this.pendingSteps.push(WFCStep.Collapse(x, y));
@@ -98,7 +99,7 @@ export class WaveFunctionCollapse {
     }
 
     const cell = this._grid.get(x, y);
-    const tileIndexToCollapse = random.nextInt(0, cell.options.length - 1);
+    const tileIndexToCollapse = this._random.nextInt(0, cell.options.length - 1);
     // consoleTile(cell.options[tileIndexToCollapse], `collapsed [${x}, ${y}] with tile`);
     cell.collapse(tileIndexToCollapse);
 
