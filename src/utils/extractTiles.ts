@@ -1,14 +1,6 @@
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 
-const areTilesEqual = (tile1: Tile, tile2: Tile): boolean => {
-  return tile1.data.every((pixel, index) => 
-    pixel.r === tile2.data[index].r &&
-    pixel.g === tile2.data[index].g &&
-    pixel.b === tile2.data[index].b
-  );
-};
-
 export const extractTiles = ({ data, height, width}: ImageData, tileSize: number, loop = true): Tile[] => {
   const tiles: Tile[] = [];
 
@@ -35,7 +27,7 @@ export const extractTiles = ({ data, height, width}: ImageData, tileSize: number
 
       const newTile = new Tile(tileSize, tileData);
 
-      if (!tiles.some(tile => areTilesEqual(tile, newTile))) {
+      if (!tiles.some(tile => tile.equals(newTile))) {
         tiles.push(newTile);
       }
     }

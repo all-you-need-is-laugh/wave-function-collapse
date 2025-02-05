@@ -30,10 +30,6 @@ export class Tile {
     this.leftNeighbors.length = 0;
     
     for (const tile of tiles) {
-      if (tile === this) {
-        continue;
-      }
-
       if (this._checkTilesOverlapFromTop(tile)) {
         this.topNeighbors.push(tile);
       }
@@ -50,6 +46,10 @@ export class Tile {
         this.leftNeighbors.push(tile);
       }
     }
+  }
+
+  equals(tile: Tile): boolean {
+    return this.data.every((pixel, index) => pixel.equals(tile.data[index]));
   }
 
   get url(): string {
