@@ -62,6 +62,13 @@ const Canvas = styled.canvas`
   flex-shrink: 0; /* Prevent canvas from shrinking */
 `;
 
+const IntervalInput = styled.input`
+  width: 60px;
+  height: 30px;
+  margin-bottom: 10px;
+  text-align: center;
+`;
+
 interface OutputPanelProps {
   tiles: Tile[];
 }
@@ -115,6 +122,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
+  const [intervalMs, setIntervalMs] = useState(1000);
 
   const onStep = useCallback((grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
     setExecutedSteps(executedSteps);
@@ -147,7 +155,7 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
 
   useEffect(stepExecutor, [stepExecutor]);
 
-  const { isRunning, start, stop } = useIntervalExecution(stepExecutor, 1000);
+  const { isRunning, start, stop } = useIntervalExecution(stepExecutor, intervalMs);
 
   return (
     <OutputPanelStyled>
@@ -158,6 +166,13 @@ export function OutputPanel({ tiles }: OutputPanelProps) {
         ) : (
           <RowContainer>
             <StepsContainer>
+              <IntervalInput
+                type="number"
+                value={intervalMs}
+                onChange={(e) => setIntervalMs(Number(e.target.value))}
+                min="1"
+                step="100"
+              />
               <ExecutionButton onClick={isRunning ? stop : start}>
                 {isRunning ? 'Stop Execution' : 'Start Execution'}
               </ExecutionButton>
