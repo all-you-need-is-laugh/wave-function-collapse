@@ -56,7 +56,7 @@ export function TilesPanel({ tiles }: TilesPanelProps) {
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
       </ScrollableTileSet>
-      {/* <TilesDebug tiles={tiles} /> */}
+      {false && <TilesDebug tiles={tiles} />}
     </TilesPanelStyled>
   )
 }
