@@ -14,19 +14,24 @@ const Container = styled.div`
 `;
 
 function App() {
+  const [imageData, setImageData] = useState<ImageData | null>(null);
   const [tiles, setTiles] = useState<Tile[]>([]);
 
-  const onTilesExtracted = useCallback((tiles: Tile[]) => {
-    setTiles(tiles);
+  const onImageDataExtracted = useCallback((data: ImageData) => {
+    setImageData(data);
+  }, []);
+
+  const onTilesExtracted = useCallback((extractedTiles: Tile[]) => {
+    setTiles(extractedTiles);
   }, []);
 
   return (
     <Container>
-      <InputPanel onTilesExtracted={onTilesExtracted} />
-      <TilesPanel tiles={tiles} />
+      <InputPanel onImageDataExtracted={onImageDataExtracted} />
+      <TilesPanel imageData={imageData} onTilesExtracted={onTilesExtracted} />
       <OutputPanel tiles={tiles} />
-    </Container >
-  )
+    </Container>
+  );
 }
 
 export default App;

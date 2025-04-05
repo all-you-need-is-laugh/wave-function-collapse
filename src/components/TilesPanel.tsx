@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Tile } from '../entities/Tile';
+import { extractTiles } from '../utils/extractTiles';
 import Panel from './Panel';
 import TileSet from './TileSet';
 
@@ -29,10 +31,11 @@ const ScrollableTileSet = styled.div`
 `;
 
 interface TilesPanelProps {
-  tiles: Tile[];
+  imageData: ImageData | null;
+  onTilesExtracted: (tiles: Tile[]) => void;
 }
 
-const TilesDebug = ({ tiles }: TilesPanelProps) => (
+const TilesDebug = ({ tiles }: { tiles: Tile[] }) => (
   <>
     <br />
     {
@@ -49,14 +52,51 @@ const TilesDebug = ({ tiles }: TilesPanelProps) => (
   </>
 );
 
-export function TilesPanel({ tiles }: TilesPanelProps) {
+export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
+  const [tiles, setTiles] = useState<Tile[]>([]);
+  const [loop, setLoop] = useState(true);
+  const [includeFlipped, setIncludeFlipped] = useState(true);
+  const [includeRotated, setIncludeRotated] = useState(true);
+
+  useEffect(() => {
+    if (imageData) {
+      const extractedTiles = extractTiles(imageData, { tileSize: 3, loop, includeFlipped, includeRotated });
+      setTiles(extractedTiles);
+      onTilesExtracted(extractedTiles);
+    }
+  }, [imageData, loop, includeFlipped, includeRotated, onTilesExtracted]);
+
   return (
     <TilesPanelStyled>
       <h2>Tiles ({tiles.length})</h2>
+      <label>
+        <input
+          type="checkbox"
+          checked={loop}
+          onChange={(e) => setLoop(e.target.checked)}
+        />
+        Loop
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={includeFlipped}
+          onChange={(e) => setIncludeFlipped(e.target.checked)}
+        />
+        Include Flipped
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={includeRotated}
+          onChange={(e) => setIncludeRotated(e.target.checked)}
+        />
+        Include Rotated
+      </label>
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
       </ScrollableTileSet>
       {false && <TilesDebug tiles={tiles} />}
     </TilesPanelStyled>
-  )
+  );
 }

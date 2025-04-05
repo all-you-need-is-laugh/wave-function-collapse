@@ -60,6 +60,61 @@ export class Tile {
     return this._url;
   }
 
+  flipHorizontally(): Tile {
+    const flippedData: Pixel[] = [];
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const originalIndex = y * this.size + (this.size - 1 - x);
+        flippedData.push(this.data[originalIndex]);
+      }
+    }
+    return new Tile(this.size, flippedData);
+  }
+
+  flipVertically(): Tile {
+    const flippedData: Pixel[] = [];
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const originalIndex = (this.size - 1 - y) * this.size + x;
+        flippedData.push(this.data[originalIndex]);
+      }
+    }
+    return new Tile(this.size, flippedData);
+  }
+
+  rotate90(): Tile {
+    const rotatedData: Pixel[] = [];
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const originalIndex = (this.size - 1 - x) * this.size + y;
+        rotatedData.push(this.data[originalIndex]);
+      }
+    }
+    return new Tile(this.size, rotatedData);
+  }
+
+  rotate180(): Tile {
+    const rotatedData: Pixel[] = [];
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const originalIndex = (this.size - 1 - y) * this.size + (this.size - 1 - x);
+        rotatedData.push(this.data[originalIndex]);
+      }
+    }
+    return new Tile(this.size, rotatedData);
+  }
+
+  rotate270(): Tile {
+    const rotatedData: Pixel[] = [];
+    for (let y = 0; y < this.size; y++) {
+      for (let x = 0; x < this.size; x++) {
+        const originalIndex = x * this.size + (this.size - 1 - y);
+        rotatedData.push(this.data[originalIndex]);
+      }
+    }
+    return new Tile(this.size, rotatedData);
+  }
+
   private _generateUrl(): string {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");

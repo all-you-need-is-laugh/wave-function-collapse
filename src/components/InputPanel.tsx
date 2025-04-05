@@ -1,8 +1,6 @@
 import Random from 'prando';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Tile } from '../entities/Tile';
-import { extractTiles } from '../utils/extractTiles';
 import { readImageData } from '../utils/readImageData';
 import Panel from './Panel';
 
@@ -36,8 +34,12 @@ const StyledFileInput = styled.input`
   font-size: 16px;
 `;
 
+const StyledCheckbox = styled.input`
+  margin: 10px 0;
+`;
+
 interface InputPanelProps {
-  onTilesExtracted: (tiles: Tile[]) => void;
+  onImageDataExtracted: (imageData: ImageData) => void;
 }
 
 const inputOptiopns = [
@@ -107,7 +109,7 @@ function imageFullPath(selectedImage: string): string {
   return `./samples/${selectedImage}.png`;
 }
 
-export function InputPanel({ onTilesExtracted = () => { } }: InputPanelProps) {
+export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps) {
   const [selectedImage, setSelectedImage] = useState(random.nextArrayItem(inputOptiopns));
   const [customImage, setCustomImage] = useState<string | null>(null);
 
@@ -115,11 +117,9 @@ export function InputPanel({ onTilesExtracted = () => { } }: InputPanelProps) {
     (async () => {
       const imagePath = customImage || imageFullPath(selectedImage);
       const imageData = await readImageData(imagePath);
-      const tiles = extractTiles(imageData, 3);
-
-      onTilesExtracted(tiles);
+      onImageDataExtracted(imageData);
     })();
-  }, [selectedImage, customImage, onTilesExtracted]);
+  }, [selectedImage, customImage, onImageDataExtracted]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
