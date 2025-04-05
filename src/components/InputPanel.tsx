@@ -61,6 +61,7 @@ const inputOptiopns = [
   'MagicOffice',
   'Maze',
   'Mazelike',
+  'Monika',
   'MoreFlowers',
   'Mountains',
   'Nested',
