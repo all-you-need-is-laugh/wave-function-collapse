@@ -8,8 +8,7 @@ export class WaveFunctionCollapse {
   readonly executedSteps: WFCStep[] = [];
   readonly pendingSteps: WFCStep[] = [];
   private readonly _random: Random;
-  public stepDurations: { min: number; max: number; avg: number } = { min: Infinity, max: -Infinity, avg: 0 };
-  private _totalDuration: number = 0;
+  public totalDuration: number = 0;
 
   constructor(
     private readonly _grid: Grid,
@@ -36,8 +35,7 @@ export class WaveFunctionCollapse {
 
     this.executedSteps.push(step);
 
-    const duration = performance.now() - startTime;
-    this._updateStepDurations(duration);
+    this.totalDuration += performance.now() - startTime;
   }
 
   private _startIteration(): void {
@@ -204,12 +202,5 @@ export class WaveFunctionCollapse {
     // console.groupEnd();
 
     return [...availableOptionSet];
-  }
-
-  private _updateStepDurations(duration: number): void {
-    this._totalDuration += duration;
-    this.stepDurations.min = Math.min(this.stepDurations.min, duration);
-    this.stepDurations.max = Math.max(this.stepDurations.max, duration);
-    this.stepDurations.avg = this._totalDuration / this.executedSteps.length;
   }
 }
