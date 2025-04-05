@@ -80,45 +80,48 @@ function drawGrid(
   pendingStep: WFCStep | undefined,
   cellSize: number,
   drawBorderEnabled: boolean,
-  showText: boolean
+  showText: boolean,
+  onlyShowCollapsed: boolean
 ) {
   grid.forEach((cell: Cell, x: number, y: number) => {
-    const pixel = cell.getPixel();
+    if (!onlyShowCollapsed || cell.collapsed) {
+      const pixel = cell.getPixel();
 
-    context.fillStyle = pixel.getColor();
-    context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      context.fillStyle = pixel.getColor();
+      context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
 
-    drawBorder(context, x, y, 'black', 0.2, cellSize, drawBorderEnabled);
+      drawBorder(context, x, y, 'black', 0.2, cellSize, drawBorderEnabled);
 
-    if (showText && !cell.collapsed) {
-      // choose contrast color
-      const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
-      context.fillStyle = luminance > 0.5 ? 'black' : 'white';
+      if (showText && !cell.collapsed) {
+        // choose contrast color
+        const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
+        context.fillStyle = luminance > 0.5 ? 'black' : 'white';
 
-      // set font size
-      if (cell.options.length.toString().length > 2) {
-        context.font = `${cellSize * 0.55}px monospace`;
-      } else {
-        context.font = `${cellSize * 0.7}px monospace`;
+        // set font size
+        if (cell.options.length.toString().length > 2) {
+          context.font = `${cellSize * 0.55}px monospace`;
+        } else {
+          context.font = `${cellSize * 0.7}px monospace`;
+        }
+        context.textAlign = 'center';
+
+        // add number in that rect
+        context.fillText(cell.options.length.toString(), x * cellSize + cellSize / 2, y * cellSize + cellSize * 0.7);
       }
-      context.textAlign = 'center';
-
-      // add number in that rect
-      context.fillText(cell.options.length.toString(), x * cellSize + cellSize / 2, y * cellSize + cellSize * 0.7);
     }
   });
 
   if (executedStep) {
     const { x, y } = executedStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'yellow', 2, cellSize, true);
+      drawBorder(context, x, y, 'yellow', 2, cellSize, !onlyShowCollapsed);
     }
   }
 
   if (pendingStep) {
     const { x, y } = pendingStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'orange', 2, cellSize, true);
+      drawBorder(context, x, y, 'orange', 2, cellSize, !onlyShowCollapsed);
     }
   }
 }
@@ -140,6 +143,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const [height, setHeight] = useState(20);
   const [drawBorderEnabled, setDrawBorderEnabled] = useState(true);
   const [showText, setShowText] = useState(true);
+  const [onlyShowCollapsed, setOnlyShowCollapsed] = useState(false);
 
   const onStep = useCallback(
     (grid: Grid, { executedSteps, pendingSteps, duration }: WFCGridStepState) => {
@@ -163,9 +167,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
       }
 
       const cellSize = cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE;
-      drawGrid(context, grid, executedSteps[executedSteps.length - 1], pendingSteps[0], cellSize, drawBorderEnabled, showText);
+      drawGrid(context, grid, executedSteps[executedSteps.length - 1], pendingSteps[0], cellSize, drawBorderEnabled, showText, onlyShowCollapsed);
     },
-    [drawBorderEnabled, showText]
+    [drawBorderEnabled, showText, onlyShowCollapsed]
   );
 
   const { stepExecutor } = useWFCGrid({
@@ -253,6 +257,14 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
             onChange={(e) => setShowText(e.target.checked)}
           />
           Show Text
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={onlyShowCollapsed}
+            onChange={(e) => setOnlyShowCollapsed(e.target.checked)}
+          />
+          Only Show Collapsed
         </label>
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />
