@@ -9,11 +9,17 @@ interface WFCGridHookResult {
   stepExecutor: () => void;
 }
 
+export interface WFCGridStepState {
+  executedSteps: WFCStep[],
+  pendingSteps: WFCStep[],
+  stepDurations: { min: number; max: number; avg: number }
+}
+
 interface WFCGridHookParams {
   width: number;
   height: number;
   tiles: Tile[],
-  onStep: (grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => void,
+  onStep: (grid: Grid, state: WFCGridStepState) => void,
   seed: number
 }
 
@@ -57,8 +63,12 @@ export const useWFCGrid = ({
     } else {
       wfc.step();
     }
-
-    onStep(grid, [...wfc.executedSteps], [...wfc.pendingSteps]);
+    
+    onStep(grid, {
+      executedSteps: [...wfc.executedSteps],
+      pendingSteps: [...wfc.pendingSteps],
+      stepDurations: wfc.stepDurations
+    });
   }, [onStep, width, height, tiles, seed]);
 
   return { stepExecutor };

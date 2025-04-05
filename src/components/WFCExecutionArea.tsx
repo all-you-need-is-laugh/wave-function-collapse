@@ -5,7 +5,7 @@ import { Grid } from '../entities/Grid';
 import { Tile } from '../entities/Tile';
 import { WFCStep } from '../entities/WFCStep';
 import { useIntervalExecution } from '../hooks/useIntervalExecution';
-import { useWFCGrid } from '../hooks/useWFCGrid';
+import { useWFCGrid, WFCGridStepState } from '../hooks/useWFCGrid';
 import { WFCStepBlock } from './WFCStepBlock';
 
 const RowContainer = styled.div`
@@ -20,7 +20,7 @@ const StepsContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   gap: 10px;
-  min-width: 160px;
+  min-width: 220px;
 `;
 
 const Button = styled.button`
@@ -43,11 +43,17 @@ const Canvas = styled.canvas`
   flex-shrink: 0; /* Prevent canvas from shrinking */
 `;
 
-const IntervalInput = styled.input`
+const NumberInput = styled.input`
   width: 60px;
   height: 30px;
-  margin-bottom: 10px;
   text-align: center;
+`;
+
+const LabelContainer = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: space-between;
 `;
 
 function drawBorder(
@@ -124,18 +130,20 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
-  const [intervalMs, setIntervalMs] = useState(100);
+  const [stepDurations, setStepDurations] = useState<{ min: number; max: number; avg: number }>({ min: 0, max: 0, avg: 0 });
+  const [intervalMs, setIntervalMs] = useState(0);
   const [seed, setSeed] = useState(54);
-  const [width, setWidth] = useState(20); // Adjustable width
-  const [height, setHeight] = useState(20); // Adjustable height
-  const [cellSize, setCellSize] = useState(20); // Adjustable cell size
-  const [drawBorderEnabled, setDrawBorderEnabled] = useState(true); // Toggle for drawing borders
-  const [showText, setShowText] = useState(true); // Toggle for showing text inside cells
+  const [width, setWidth] = useState(10);
+  const [height, setHeight] = useState(10);
+  const [cellSize, setCellSize] = useState(20);
+  const [drawBorderEnabled, setDrawBorderEnabled] = useState(true);
+  const [showText, setShowText] = useState(true);
 
   const onStep = useCallback(
-    (grid: Grid, executedSteps: WFCStep[], pendingSteps: WFCStep[]) => {
+    (grid: Grid, { executedSteps, pendingSteps, stepDurations }: WFCGridStepState) => {
       setExecutedSteps(executedSteps);
       setPendingSteps(pendingSteps);
+      setStepDurations(stepDurations);
 
       const canvas = canvasRef.current;
 
@@ -165,16 +173,17 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     seed,
   });
 
-  useEffect(stepExecutor, [stepExecutor]);
+  // useEffect(stepExecutor, [stepExecutor]);
 
   const { isRunning, start, stop } = useIntervalExecution(stepExecutor, intervalMs);
 
   useEffect(() => {
+    stepExecutor();
     // Cleanup interval when tiles change
     return () => {
       stop();
     }
-  }, [stop, tiles, seed]);
+  }, [stop, tiles, seed, stepExecutor]);
 
   return (
     <RowContainer>
@@ -183,37 +192,52 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
         </ExecutionButton>
         <Button onClick={stepExecutor} disabled={isRunning}>Execute a step</Button>
-        Auto-execution interval <IntervalInput
-          type="number"
-          value={intervalMs}
-          onChange={(e) => setIntervalMs(Number(e.target.value))}
-          min="0"
-          step="100"
-        />
-        Seed <IntervalInput
-          type="number"
-          value={seed}
-          onChange={(e) => setSeed(Number(e.target.value))}
-          min="0"
-        />
-        Width <IntervalInput
-          type="number"
-          value={width}
-          onChange={(e) => setWidth(Number(e.target.value))}
-          min="1"
-        />
-        Height <IntervalInput
-          type="number"
-          value={height}
-          onChange={(e) => setHeight(Number(e.target.value))}
-          min="1"
-        />
-        Cell Size <IntervalInput
-          type="number"
-          value={cellSize}
-          onChange={(e) => setCellSize(Number(e.target.value))}
-          min="1"
-        />
+        <LabelContainer>
+          Auto-exec. interval
+          <NumberInput
+            type="number"
+            value={intervalMs}
+            onChange={(e) => setIntervalMs(Number(e.target.value))}
+            min="0"
+            step="100"
+          />
+        </LabelContainer>
+        <LabelContainer>
+          Seed
+          <NumberInput
+            type="number"
+            value={seed}
+            onChange={(e) => setSeed(Number(e.target.value))}
+            min="0"
+          />
+        </LabelContainer>
+        <LabelContainer>
+          Width
+          <NumberInput
+            type="number"
+            value={width}
+            onChange={(e) => setWidth(Number(e.target.value))}
+            min="1"
+          />
+        </LabelContainer>
+        <LabelContainer>
+          Height
+          <NumberInput
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+            min="1"
+          />
+        </LabelContainer>
+        <LabelContainer>
+          Cell Size
+          <NumberInput
+            type="number"
+            value={cellSize}
+            onChange={(e) => setCellSize(Number(e.target.value))}
+            min="1"
+          />
+        </LabelContainer>
         <label>
           <input
             type="checkbox"
@@ -230,9 +254,14 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           />
           Show Text
         </label>
-        <br />
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />
+        <WFCStepBlock label={<>
+          Duration<br />
+          Min: {stepDurations.min.toFixed(3)}<br />
+          Avg: {stepDurations.avg.toFixed(3)}<br />
+          Max: {stepDurations.max.toFixed(3)}<br />
+        </>} />
         {/* {executedSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} done={true} />)} */}
         {/* {pendingSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} />)} */}
       </StepsContainer>

@@ -36,7 +36,7 @@ export function useIntervalExecution(executeFunction: () => void, interval: numb
         intervalRef.current = null;
       }
     };
-  }, [isRunning, executeFunction, interval]);
+  }, [isRunning, executeFunction, interval, stop]);
 
   return { isRunning, start, stop };
 }
