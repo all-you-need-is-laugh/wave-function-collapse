@@ -39,7 +39,7 @@ export const useWFCGrid = ({
       gridRef.current = null;
       wfcRef.current = null;
     }
-  }, [tiles, seed]);
+  }, [tiles, seed, width, height]);
 
   const stepExecutor = useCallback(() => {
     if (!tiles.length) {
