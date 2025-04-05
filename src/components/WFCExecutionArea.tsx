@@ -8,6 +8,8 @@ import { useIntervalExecution } from '../hooks/useIntervalExecution';
 import { useWFCGrid, WFCGridStepState } from '../hooks/useWFCGrid';
 import { WFCStepBlock } from './WFCStepBlock';
 
+const DEFAULT_CELL_SIZE = 20;
+
 const RowContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -128,14 +130,14 @@ interface WFCExecutionAreaProps {
 export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+  const cellSizeRef = useRef<HTMLInputElement>(null);
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
   const [stepDurations, setStepDurations] = useState<{ min: number; max: number; avg: number }>({ min: 0, max: 0, avg: 0 });
   const [intervalMs, setIntervalMs] = useState(0);
   const [seed, setSeed] = useState(54);
-  const [width, setWidth] = useState(10);
-  const [height, setHeight] = useState(10);
-  const [cellSize, setCellSize] = useState(20);
+  const [width, setWidth] = useState(20);
+  const [height, setHeight] = useState(20);
   const [drawBorderEnabled, setDrawBorderEnabled] = useState(true);
   const [showText, setShowText] = useState(true);
 
@@ -160,9 +162,10 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         }
       }
 
+      const cellSize = cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE;
       drawGrid(context, grid, executedSteps[executedSteps.length - 1], pendingSteps[0], cellSize, drawBorderEnabled, showText);
     },
-    [cellSize, drawBorderEnabled, showText]
+    [drawBorderEnabled, showText]
   );
 
   const { stepExecutor } = useWFCGrid({
@@ -229,9 +232,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         <LabelContainer>
           Cell Size
           <NumberInput
+            ref={cellSizeRef}
             type="number"
-            value={cellSize}
-            onChange={(e) => setCellSize(Number(e.target.value))}
+            defaultValue={DEFAULT_CELL_SIZE}
             min="1"
           />
         </LabelContainer>
@@ -264,8 +267,8 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
       </StepsContainer>
       <Canvas
         ref={canvasRef}
-        width={width * cellSize}
-        height={height * cellSize}
+        width={width * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)}
+        height={height * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)}
       />
     </RowContainer>
   );
