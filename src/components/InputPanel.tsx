@@ -30,6 +30,12 @@ const StyledSelect = styled.select`
   color: #333;
 `;
 
+const StyledFileInput = styled.input`
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+`;
+
 interface InputPanelProps {
   onTilesExtracted: (tiles: Tile[]) => void;
 }
@@ -103,28 +109,39 @@ function imageFullPath(selectedImage: string): string {
 
 export function InputPanel({ onTilesExtracted = () => { } }: InputPanelProps) {
   const [selectedImage, setSelectedImage] = useState(random.nextArrayItem(inputOptiopns));
+  const [customImage, setCustomImage] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      const imageData = await readImageData(imageFullPath(selectedImage));
+      const imagePath = customImage || imageFullPath(selectedImage);
+      const imageData = await readImageData(imagePath);
       const tiles = extractTiles(imageData, 3);
 
       onTilesExtracted(tiles);
     })();
-  }, [selectedImage, onTilesExtracted]);
+  }, [selectedImage, customImage, onTilesExtracted]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      setCustomImage(fileURL);
+    }
+  };
 
   return (
     <InputPanelStyled>
       <h2>Input</h2>
-      <StyledSelect onChange={(e) => setSelectedImage(e.target.value)} value={selectedImage}>
+      <StyledSelect onChange={(e) => { setSelectedImage(e.target.value); setCustomImage(null); }} value={selectedImage}>
         {inputOptiopns.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
         ))}
       </StyledSelect>
-      <StyledImage src={imageFullPath(selectedImage)} />
+      <StyledFileInput type="file" accept="image/*" onChange={handleFileChange} />
+      <StyledImage src={customImage || imageFullPath(selectedImage)} />
     </InputPanelStyled>
-  )
+  );
 }
 
