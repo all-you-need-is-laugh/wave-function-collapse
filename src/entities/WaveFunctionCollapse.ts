@@ -114,23 +114,33 @@ export class WaveFunctionCollapse {
   private _propagateEntropyCalculation(x: number, y: number) {
     // top neighbor
     if (y > 0) {
-      this.pendingSteps.push(WFCStep.CalculateEntropy(x, y - 1));
+      this._appendCalculateEntropyStep(x, y - 1);
     }
 
     // right neighbor
     if (x < this._grid.width - 1) {
-      this.pendingSteps.push(WFCStep.CalculateEntropy(x + 1, y));
+      this._appendCalculateEntropyStep(x + 1, y);
     }
 
     // bottom neighbor
     if (y < this._grid.height - 1) {
-      this.pendingSteps.push(WFCStep.CalculateEntropy(x, y + 1));
+      this._appendCalculateEntropyStep(x, y + 1);
     }
 
     // left neighbor
     if (x > 0) {
-      this.pendingSteps.push(WFCStep.CalculateEntropy(x - 1, y));
+      this._appendCalculateEntropyStep(x - 1, y);
     }
+  }
+
+  private _appendCalculateEntropyStep(x: number, y: number): void {
+    if (this._grid.get(x, y).collapsed) {
+      return;
+    }
+    if (this.pendingSteps.some(step => step.x === x && step.y === y && step.type === WFCStepType.CALCULATE_ENTROPY)) {
+      return;
+    }
+    this.pendingSteps.push(WFCStep.CalculateEntropy(x, y));
   }
 
   private _calculateEntropy(x?: number, y?: number): void {
@@ -146,30 +156,25 @@ export class WaveFunctionCollapse {
 
     const startOptionsLength = cell.options.length;
     let availableOptions = [...cell.options];
-    // console.log("### > _calculateEntropy > cell.options:", cell.options);
 
     // check top neighbor
     if (y > 0) {
       availableOptions = this._filterByNeighbor(this._grid.get(x, y - 1), availableOptions, tile => tile.bottomNeighbors);
-      // console.log("### > _calculateEntropy > availableOptions [top]", availableOptions);
     }
 
     // check right neighbor
     if (x < this._grid.width - 1) {
       availableOptions = this._filterByNeighbor(this._grid.get(x + 1, y), availableOptions, tile => tile.leftNeighbors);
-      // console.log("### > _calculateEntropy > availableOptions [right]", availableOptions);
     }
 
     // check bottom neighbor
     if (y < this._grid.height - 1) {
       availableOptions = this._filterByNeighbor(this._grid.get(x, y + 1), availableOptions, tile => tile.topNeighbors);
-      // console.log("### > _calculateEntropy > availableOptions [bottom]", availableOptions);
     }
 
     // check left neighbor
     if (x > 0) {
       availableOptions = this._filterByNeighbor(this._grid.get(x - 1, y), availableOptions, tile => tile.rightNeighbors);
-      // console.log("### > _calculateEntropy > availableOptions [left]", availableOptions);
     }
 
     cell.options.splice(0, cell.options.length, ...availableOptions);
