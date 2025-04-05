@@ -109,14 +109,14 @@ function drawGrid(
   if (executedStep) {
     const { x, y } = executedStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'yellow', 2, cellSize, drawBorderEnabled);
+      drawBorder(context, x, y, 'yellow', 2, cellSize, true);
     }
   }
 
   if (pendingStep) {
     const { x, y } = pendingStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'orange', 2, cellSize, drawBorderEnabled);
+      drawBorder(context, x, y, 'orange', 2, cellSize, true);
     }
   }
 }
@@ -173,17 +173,14 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     seed,
   });
 
-  // useEffect(stepExecutor, [stepExecutor]);
-
   const { isRunning, start, stop } = useIntervalExecution(stepExecutor, intervalMs);
 
   useEffect(() => {
-    stepExecutor();
     // Cleanup interval when tiles change
     return () => {
       stop();
     }
-  }, [stop, tiles, seed, stepExecutor]);
+  }, [stop, tiles, seed]);
 
   return (
     <RowContainer>
