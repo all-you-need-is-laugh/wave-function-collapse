@@ -27,37 +27,17 @@ export const extractTiles = ({ data, height, width }: ImageData, settings: { til
       }
 
       const newTile = new Tile(tileSize, tileData);
-
-      if (tiles.some(tile => tile.equals(newTile))) {
-        continue;
-      }
-
-      tiles.push(newTile);
-
+      const tilesToAdd = [newTile];
       if (includeFlipped) {
-        const flippedTiles = [
-          newTile.flipHorizontally(),
-          newTile.flipVertically()
-        ];
-
-        for (const flippedTile of flippedTiles) {
-          if (!tiles.some(tile => tile.equals(flippedTile))) {
-            tiles.push(flippedTile);
-          }
-        }
+        tilesToAdd.push(newTile.flipHorizontally(), newTile.flipVertically());
+      }
+      if (includeRotated) {
+        tilesToAdd.push(newTile.rotate90(), newTile.rotate180(), newTile.rotate270());
       }
 
-      if (includeRotated) {
-        const rotatedTiles = [
-          newTile.rotate90(),
-          newTile.rotate180(),
-          newTile.rotate270()
-        ];
-
-        for (const rotatedTile of rotatedTiles) {
-          if (!tiles.some(tile => tile.equals(rotatedTile))) {
-            tiles.push(rotatedTile);
-          }
+      for (const tileToAdd of tilesToAdd) {
+        if (!tiles.some(tile => tile.equals(tileToAdd))) {
+          tiles.push(tileToAdd);
         }
       }
     }
