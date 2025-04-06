@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 import { asyncTimeoutLoop } from './asyncTimeoutLoop';
@@ -12,6 +13,7 @@ interface ExtractTilesSettings {
 export const extractTiles = async (
   imageData: ImageData, 
   settings: ExtractTilesSettings, 
+  eventEmitter?: EventEmitter
 ): Promise<Tile[]> => {
   const tiles: Tile[] = [];
   const { data, width, height } = imageData;
@@ -57,10 +59,16 @@ export const extractTiles = async (
 
   await asyncTimeoutLoop(0, yLimit, (y) => {
     processRow(y);
+    if (eventEmitter) {
+      eventEmitter.emit('rowProcessed', { row: y, totalTiles: tiles.length });
+    }
   });
 
   await asyncTimeoutLoop(0, tiles.length, (i) => {
     tiles[i].fillNeighbors(tiles);
+    if (eventEmitter) {
+      eventEmitter.emit('tileProcessed', { tileIndex: i, totalTiles: tiles.length });
+    }
   });
 
   return tiles;

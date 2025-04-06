@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { Tile } from '../entities/Tile';
@@ -13,8 +14,8 @@ const TilesPanelStyled = styled(Panel)`
 
 const StyledLabel = styled.label`
   font-weight: bold;
-  width: 80px;
   display: inline-block;
+  margin-right: 10px;
 `;
 
 const StyledTile = styled.img`
@@ -58,12 +59,22 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
   const [loop, setLoop] = useState(true);
   const [includeFlipped, setIncludeFlipped] = useState(true);
   const [includeRotated, setIncludeRotated] = useState(true);
+  const [extractionStatus, setExtractionStatus] = useState<string | null>(null);
 
-  const handleExtractTiles = () => {
+  const handleExtractTiles = async () => {
     if (imageData) {
-      const extractedTiles = extractTiles(imageData, { tileSize: 3, loop, includeFlipped, includeRotated });
+      const eventEmitter = new EventEmitter();
+      eventEmitter.on('rowProcessed', ({ row, totalTiles }) => {
+        setExtractionStatus(`Row ${row} processed. Total tiles: ${totalTiles}`);
+      });
+      eventEmitter.on('tileProcessed', ({ tileIndex, totalTiles }) => {
+        setExtractionStatus(`Tile ${tileIndex} processed. Total tiles: ${totalTiles}`);
+      });
+
+      const extractedTiles = await extractTiles(imageData, { tileSize: 3, loop, includeFlipped, includeRotated }, eventEmitter);
       setTiles(extractedTiles);
       onTilesExtracted(extractedTiles);
+      setExtractionStatus(`Extraction completed. Total tiles extracted: ${extractedTiles.length}`);
     }
   };
 
@@ -96,8 +107,7 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
       </label>
       <button onClick={handleExtractTiles}>Extract Tiles</button>
       <div>
-        <StyledLabel>Tile count:</StyledLabel>
-        {tiles.length}
+        <StyledLabel>Extraction status:</StyledLabel>{extractionStatus}
       </div>
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
