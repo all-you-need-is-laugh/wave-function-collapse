@@ -1,14 +1,26 @@
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
+import { asyncTimeoutLoop } from './asyncTimeoutLoop';
 
-export const extractTiles = ({ data, height, width }: ImageData, settings: { tileSize: number, loop: boolean, includeFlipped: boolean, includeRotated: boolean }): Tile[] => {
+interface ExtractTilesSettings {
+  tileSize: number,
+  loop: boolean,
+  includeFlipped: boolean,
+  includeRotated: boolean
+}
+
+export const extractTiles = async (
+  imageData: ImageData, 
+  settings: ExtractTilesSettings, 
+): Promise<Tile[]> => {
   const tiles: Tile[] = [];
+  const { data, width, height } = imageData;
   const { tileSize, loop, includeFlipped, includeRotated } = settings;
 
   const xLimit = loop ? width : width - tileSize + 1;
   const yLimit = loop ? height : height - tileSize + 1;
 
-  for (let y = 0; y < yLimit; y++) {
+  const processRow = (y: number) => {
     for (let x = 0; x < xLimit; x++) {
       const tileData: Pixel[] = [];
 
@@ -41,11 +53,15 @@ export const extractTiles = ({ data, height, width }: ImageData, settings: { til
         }
       }
     }
-  }
+  };
 
-  for (const tile of tiles) {
-    tile.fillNeighbors(tiles);
-  }
+  await asyncTimeoutLoop(0, yLimit, (y) => {
+    processRow(y);
+  });
+
+  await asyncTimeoutLoop(0, tiles.length, (i) => {
+    tiles[i].fillNeighbors(tiles);
+  });
 
   return tiles;
 }
