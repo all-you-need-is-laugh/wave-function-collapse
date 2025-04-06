@@ -34,10 +34,6 @@ const StyledFileInput = styled.input`
   font-size: 16px;
 `;
 
-const StyledCheckbox = styled.input`
-  margin: 10px 0;
-`;
-
 interface InputPanelProps {
   onImageDataExtracted: (imageData: ImageData) => void;
 }
