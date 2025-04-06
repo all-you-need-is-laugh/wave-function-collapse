@@ -127,7 +127,7 @@ export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps
 
   return (
     <InputPanelStyled>
-      <h2>Input</h2>
+      <h2>1. Select the image</h2>
       <StyledSelect onChange={(e) => { setSelectedImage(e.target.value); setCustomImage(null); }} value={selectedImage}>
         {inputOptiopns.map((option) => (
           <option key={option} value={option}>
@@ -135,6 +135,7 @@ export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps
           </option>
         ))}
       </StyledSelect>
+      <div>OR</div>
       <StyledFileInput type="file" accept="image/*" onChange={handleFileChange} />
       <StyledImage src={customImage || imageFullPath(selectedImage)} />
     </InputPanelStyled>

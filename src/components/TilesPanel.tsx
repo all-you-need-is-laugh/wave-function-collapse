@@ -69,7 +69,7 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
 
   return (
     <TilesPanelStyled>
-      <h2>Tiles ({tiles.length})</h2>
+      <h2>2. Extract tiles</h2>
       <label>
         <input
           type="checkbox"
@@ -95,6 +95,10 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         Include Rotated
       </label>
       <button onClick={handleExtractTiles}>Extract Tiles</button>
+      <div>
+        <StyledLabel>Tile count:</StyledLabel>
+        {tiles.length}
+      </div>
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
       </ScrollableTileSet>

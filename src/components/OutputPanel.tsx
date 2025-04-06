@@ -24,7 +24,7 @@ interface OutputPanelProps {
 export function OutputPanel({ tiles }: OutputPanelProps) {
   return (
     <OutputPanelStyled>
-      <h2>Output</h2>
+      <h2>3. Generate a new image</h2>
       {
         tiles.length === 0 ? (
           <Loader>Loading...</Loader>
