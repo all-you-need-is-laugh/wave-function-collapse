@@ -141,9 +141,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const [seed, setSeed] = useState(54);
   const [width, setWidth] = useState(20);
   const [height, setHeight] = useState(20);
-  const [drawBorderEnabled, setDrawBorderEnabled] = useState(true);
-  const [showText, setShowText] = useState(true);
-  const [onlyShowCollapsed, setOnlyShowCollapsed] = useState(false);
+  const [drawBorderEnabled, setDrawBorderEnabled] = useState(false);
+  const [showText, setShowText] = useState(false);
+  const [onlyShowCollapsed, setOnlyShowCollapsed] = useState(true);
 
   const onStep = useCallback(
     (grid: Grid, { executedSteps, pendingSteps, duration }: WFCGridStepState) => {
