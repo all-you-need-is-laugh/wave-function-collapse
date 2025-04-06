@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Tile } from '../entities/Tile';
 import { extractTiles } from '../utils/extractTiles';
@@ -28,6 +28,7 @@ const StyledTile = styled.img`
 const ScrollableTileSet = styled.div`
   flex-grow: 1;
   overflow-y: auto;
+  margin: 10px 0 0;
 `;
 
 interface TilesPanelProps {
@@ -58,13 +59,13 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
   const [includeFlipped, setIncludeFlipped] = useState(true);
   const [includeRotated, setIncludeRotated] = useState(true);
 
-  useEffect(() => {
+  const handleExtractTiles = () => {
     if (imageData) {
       const extractedTiles = extractTiles(imageData, { tileSize: 3, loop, includeFlipped, includeRotated });
       setTiles(extractedTiles);
       onTilesExtracted(extractedTiles);
     }
-  }, [imageData, loop, includeFlipped, includeRotated, onTilesExtracted]);
+  };
 
   return (
     <TilesPanelStyled>
@@ -93,6 +94,7 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         />
         Include Rotated
       </label>
+      <button onClick={handleExtractTiles}>Extract Tiles</button>
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
       </ScrollableTileSet>
