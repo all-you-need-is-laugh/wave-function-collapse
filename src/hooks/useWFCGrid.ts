@@ -12,7 +12,6 @@ interface WFCGridHookResult {
 export interface WFCGridStepState {
   executedSteps: WFCStep[],
   pendingSteps: WFCStep[],
-  duration: number
 }
 
 interface WFCGridHookParams {
@@ -67,7 +66,6 @@ export const useWFCGrid = ({
     onStep(grid, {
       executedSteps: [...wfc.executedSteps],
       pendingSteps: [...wfc.pendingSteps],
-      duration: wfc.totalDuration
     });
   }, [onStep, width, height, tiles, seed]);
 

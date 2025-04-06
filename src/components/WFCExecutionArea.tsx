@@ -136,7 +136,6 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const cellSizeRef = useRef<HTMLInputElement>(null);
   const [executedSteps, setExecutedSteps] = useState<WFCStep[]>([]);
   const [pendingSteps, setPendingSteps] = useState<WFCStep[]>([]);
-  const [duration, setDuration] = useState<number>(0);
   const [intervalMs, setIntervalMs] = useState(0);
   const [seed, setSeed] = useState(54);
   const [width, setWidth] = useState(20);
@@ -146,10 +145,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const [onlyShowCollapsed, setOnlyShowCollapsed] = useState(true);
 
   const onStep = useCallback(
-    (grid: Grid, { executedSteps, pendingSteps, duration }: WFCGridStepState) => {
+    (grid: Grid, { executedSteps, pendingSteps }: WFCGridStepState) => {
       setExecutedSteps(executedSteps);
       setPendingSteps(pendingSteps);
-      setDuration(duration / 1000);
 
       const canvas = canvasRef.current;
 
@@ -268,7 +266,6 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         </label>
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />
-        <WFCStepBlock label={`Duration: ${duration.toFixed(3)}`} />
         {/* {executedSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} done={true} />)} */}
         {/* {pendingSteps.map((step, index) => <WFCStepBlock key={index} label={step.name} />)} */}
       </StepsContainer>

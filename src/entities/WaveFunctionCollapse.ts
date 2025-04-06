@@ -8,7 +8,6 @@ export class WaveFunctionCollapse {
   readonly executedSteps: WFCStep[] = [];
   readonly pendingSteps: WFCStep[] = [];
   private readonly _random: Random;
-  public totalDuration: number = 0;
 
   constructor(
     private readonly _grid: Grid,
@@ -19,8 +18,6 @@ export class WaveFunctionCollapse {
   }
 
   step(): void {
-    const startTime = performance.now();
-
     if (this.pendingSteps.length === 0) {
       this._startIteration();
     }
@@ -34,8 +31,6 @@ export class WaveFunctionCollapse {
     this._handleStep(step);
 
     this.executedSteps.push(step);
-
-    this.totalDuration += performance.now() - startTime;
   }
 
   private _startIteration(): void {
