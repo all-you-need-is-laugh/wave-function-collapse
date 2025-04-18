@@ -73,18 +73,29 @@ function drawBorder(
   context.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
 }
 
-function drawGrid(
-  context: CanvasRenderingContext2D,
-  grid: Grid,
-  executedStep: WFCStep | undefined,
-  pendingStep: WFCStep | undefined,
-  cellSize: number,
-  drawBorderEnabled: boolean,
-  showText: boolean,
-  onlyShowCollapsed: boolean,
-) {
+interface DrawGridSettings {
+  context: CanvasRenderingContext2D;
+  grid: Grid;
+  executedStep: WFCStep | undefined;
+  pendingStep: WFCStep | undefined;
+  cellSize: number;
+  drawBorderEnabled: boolean;
+  showText: boolean;
+  showOnlyCollapsed: boolean;
+}
+
+function drawGrid({
+  context,
+  grid,
+  executedStep,
+  pendingStep,
+  cellSize,
+  drawBorderEnabled,
+  showText,
+  showOnlyCollapsed,
+}: DrawGridSettings) {
   grid.forEach((cell: Cell, x: number, y: number) => {
-    if (onlyShowCollapsed && !cell.collapsed) {
+    if (showOnlyCollapsed && !cell.collapsed) {
       return undefined;
     }
 
@@ -122,14 +133,14 @@ function drawGrid(
   if (executedStep) {
     const { x, y } = executedStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'yellow', 2, cellSize, !onlyShowCollapsed);
+      drawBorder(context, x, y, 'yellow', 2, cellSize, !showOnlyCollapsed);
     }
   }
 
   if (pendingStep) {
     const { x, y } = pendingStep;
     if (x !== undefined && y !== undefined) {
-      drawBorder(context, x, y, 'orange', 2, cellSize, !onlyShowCollapsed);
+      drawBorder(context, x, y, 'orange', 2, cellSize, !showOnlyCollapsed);
     }
   }
 }
@@ -150,7 +161,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
   const [height, setHeight] = useState(20);
   const [drawBorderEnabled, setDrawBorderEnabled] = useState(false);
   const [showText, setShowText] = useState(false);
-  const [onlyShowCollapsed, setOnlyShowCollapsed] = useState(true);
+  const [showOnlyCollapsed, setShowOnlyCollapsed] = useState(true);
 
   const onStep = useCallback(
     (grid: Grid, { executedSteps, pendingSteps }: WFCGridStepState) => {
@@ -175,18 +186,18 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
       const cellSize = cellSizeRef.current
         ? Number(cellSizeRef.current.value)
         : DEFAULT_CELL_SIZE;
-      drawGrid(
+      drawGrid({
         context,
         grid,
-        executedSteps[executedSteps.length - 1],
-        pendingSteps[0],
+        executedStep: executedSteps[executedSteps.length - 1],
+        pendingStep: pendingSteps[0],
         cellSize,
         drawBorderEnabled,
         showText,
-        onlyShowCollapsed,
-      );
+        showOnlyCollapsed,
+      });
     },
-    [drawBorderEnabled, showText, onlyShowCollapsed],
+    [drawBorderEnabled, showText, showOnlyCollapsed],
   );
 
   const { stepExecutor } = useWFCGrid({
@@ -287,12 +298,12 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         <label>
           <input
             type="checkbox"
-            checked={onlyShowCollapsed}
+            checked={showOnlyCollapsed}
             onChange={e => {
-              setOnlyShowCollapsed(e.target.checked);
+              setShowOnlyCollapsed(e.target.checked);
             }}
           />
-          Only Show Collapsed
+          Show Only Collapsed
         </label>
         <WFCStepBlock label={`Steps done: ${executedSteps.length}`} done={true} />
         <WFCStepBlock label={`Steps to do: ${pendingSteps.length}`} />

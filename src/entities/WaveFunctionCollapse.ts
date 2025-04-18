@@ -53,7 +53,7 @@ export class WaveFunctionCollapse {
         return;
 
       default:
-        throw new Error(`Unknown step name: ${step.type}`);
+        throw new Error(`Unknown step name: ${String(step.type)}`);
     }
   }
 
