@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface WFCStepBlockProps {
-  label: string | JSX.Element;
+  label: string | React.JSX.Element;
   done?: boolean;
 }
 
