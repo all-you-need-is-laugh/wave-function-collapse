@@ -1,7 +1,7 @@
 export enum WFCStepType {
   CALCULATE_ENTROPY = 'CALCULATE_ENTROPY',
   COLLAPSE = 'COLLAPSE',
-  PICK_WITH_MIN_ENTROPY = 'PICK_WITH_MIN_ENTROPY'
+  PICK_WITH_MIN_ENTROPY = 'PICK_WITH_MIN_ENTROPY',
 }
 
 export class WFCStep {
@@ -9,8 +9,8 @@ export class WFCStep {
     readonly type: WFCStepType,
     readonly name: string,
     readonly x?: number,
-    readonly y?: number
-  ) { }
+    readonly y?: number,
+  ) {}
 
   static PickWithMinEntropy(): WFCStep {
     return new WFCStep(WFCStepType.PICK_WITH_MIN_ENTROPY, 'Pick');

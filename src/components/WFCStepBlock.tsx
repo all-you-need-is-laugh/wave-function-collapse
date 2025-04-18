@@ -17,9 +17,5 @@ const Badge = styled.div<{ $done: boolean }>`
 `;
 
 export function WFCStepBlock({ label, done = false }: WFCStepBlockProps) {
-  return (
-    <Badge $done={done}>
-      {label}
-    </Badge>
-  );
+  return <Badge $done={done}>{label}</Badge>;
 }

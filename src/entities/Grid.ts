@@ -1,12 +1,12 @@
-import { Cell } from "./Cell";
+import { Cell } from './Cell';
 
 export class Grid {
   private readonly _cells: Cell[] = [];
 
   constructor(
     public readonly width: number,
-    public readonly height: number
-  ) { }
+    public readonly height: number,
+  ) {}
 
   private _index(x: number, y: number): number {
     return y * this.width + x;
@@ -20,8 +20,8 @@ export class Grid {
     this._cells[this._index(x, y)] = cell;
   }
 
-  getCoordinates(targetCell: Cell): { x: number, y: number } {
-    let result: { x: number, y: number } | undefined;
+  getCoordinates(targetCell: Cell): { x: number; y: number } {
+    let result: { x: number; y: number } | undefined;
 
     this.forEach((cell, x, y) => {
       if (targetCell === cell) {

@@ -2,7 +2,7 @@ export class Pixel {
   constructor(
     public r: number,
     public g: number,
-    public b: number
+    public b: number,
   ) {}
 
   equals(pixel: Pixel): boolean {

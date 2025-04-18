@@ -65,7 +65,7 @@ function drawBorder(
   color: string,
   lineWidth: number,
   cellSize: number,
-  draw: boolean
+  draw: boolean,
 ) {
   if (!draw) return;
   context.strokeStyle = color;
@@ -81,7 +81,7 @@ function drawGrid(
   cellSize: number,
   drawBorderEnabled: boolean,
   showText: boolean,
-  onlyShowCollapsed: boolean
+  onlyShowCollapsed: boolean,
 ) {
   grid.forEach((cell: Cell, x: number, y: number) => {
     if (!onlyShowCollapsed || cell.collapsed) {
@@ -106,7 +106,11 @@ function drawGrid(
         context.textAlign = 'center';
 
         // add number in that rect
-        context.fillText(cell.options.length.toString(), x * cellSize + cellSize / 2, y * cellSize + cellSize * 0.7);
+        context.fillText(
+          cell.options.length.toString(),
+          x * cellSize + cellSize / 2,
+          y * cellSize + cellSize * 0.7,
+        );
       }
     }
   });
@@ -164,10 +168,21 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         }
       }
 
-      const cellSize = cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE;
-      drawGrid(context, grid, executedSteps[executedSteps.length - 1], pendingSteps[0], cellSize, drawBorderEnabled, showText, onlyShowCollapsed);
+      const cellSize = cellSizeRef.current
+        ? Number(cellSizeRef.current.value)
+        : DEFAULT_CELL_SIZE;
+      drawGrid(
+        context,
+        grid,
+        executedSteps[executedSteps.length - 1],
+        pendingSteps[0],
+        cellSize,
+        drawBorderEnabled,
+        showText,
+        onlyShowCollapsed,
+      );
     },
-    [drawBorderEnabled, showText, onlyShowCollapsed]
+    [drawBorderEnabled, showText, onlyShowCollapsed],
   );
 
   const { stepExecutor } = useWFCGrid({
@@ -184,7 +199,7 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
     // Cleanup interval when tiles change
     return () => {
       stop();
-    }
+    };
   }, [stop, tiles, seed]);
 
   return (
@@ -193,13 +208,17 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
         <ExecutionButton onClick={isRunning ? stop : start}>
           {isRunning ? 'Stop auto-execution' : 'Start auto-execution'}
         </ExecutionButton>
-        <Button onClick={stepExecutor} disabled={isRunning}>Execute a step</Button>
+        <Button onClick={stepExecutor} disabled={isRunning}>
+          Execute a step
+        </Button>
         <LabelContainer>
           Auto-exec. interval
           <NumberInput
             type="number"
             value={intervalMs}
-            onChange={(e) => setIntervalMs(Number(e.target.value))}
+            onChange={e => {
+              setIntervalMs(Number(e.target.value));
+            }}
             min="0"
             step="100"
           />
@@ -209,7 +228,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           <NumberInput
             type="number"
             value={seed}
-            onChange={(e) => setSeed(Number(e.target.value))}
+            onChange={e => {
+              setSeed(Number(e.target.value));
+            }}
             min="0"
           />
         </LabelContainer>
@@ -218,7 +239,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           <NumberInput
             type="number"
             value={width}
-            onChange={(e) => setWidth(Number(e.target.value))}
+            onChange={e => {
+              setWidth(Number(e.target.value));
+            }}
             min="1"
           />
         </LabelContainer>
@@ -227,24 +250,23 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           <NumberInput
             type="number"
             value={height}
-            onChange={(e) => setHeight(Number(e.target.value))}
+            onChange={e => {
+              setHeight(Number(e.target.value));
+            }}
             min="1"
           />
         </LabelContainer>
         <LabelContainer>
           Cell Size
-          <NumberInput
-            ref={cellSizeRef}
-            type="number"
-            defaultValue={DEFAULT_CELL_SIZE}
-            min="1"
-          />
+          <NumberInput ref={cellSizeRef} type="number" defaultValue={DEFAULT_CELL_SIZE} min="1" />
         </LabelContainer>
         <label>
           <input
             type="checkbox"
             checked={drawBorderEnabled}
-            onChange={(e) => setDrawBorderEnabled(e.target.checked)}
+            onChange={e => {
+              setDrawBorderEnabled(e.target.checked);
+            }}
           />
           Draw Borders
         </label>
@@ -252,7 +274,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           <input
             type="checkbox"
             checked={showText}
-            onChange={(e) => setShowText(e.target.checked)}
+            onChange={e => {
+              setShowText(e.target.checked);
+            }}
           />
           Show Text
         </label>
@@ -260,7 +284,9 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
           <input
             type="checkbox"
             checked={onlyShowCollapsed}
-            onChange={(e) => setOnlyShowCollapsed(e.target.checked)}
+            onChange={e => {
+              setOnlyShowCollapsed(e.target.checked);
+            }}
           />
           Only Show Collapsed
         </label>
@@ -271,8 +297,12 @@ export function WFCExecutionArea({ tiles }: WFCExecutionAreaProps) {
       </StepsContainer>
       <Canvas
         ref={canvasRef}
-        width={width * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)}
-        height={height * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)}
+        width={
+          width * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)
+        }
+        height={
+          height * (cellSizeRef.current ? Number(cellSizeRef.current.value) : DEFAULT_CELL_SIZE)
+        }
       />
     </RowContainer>
   );

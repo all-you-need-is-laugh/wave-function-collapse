@@ -1,4 +1,8 @@
-export const asyncTimeoutLoop = async (start: number, end: number, callback: (index: number) => void): Promise<void> => {
+export const asyncTimeoutLoop = async (
+  start: number,
+  end: number,
+  callback: (index: number) => void,
+): Promise<void> => {
   return new Promise((resolve, reject) => {
     let index = start;
 

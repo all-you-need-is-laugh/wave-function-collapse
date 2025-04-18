@@ -105,7 +105,7 @@ function imageFullPath(selectedImage: string): string {
   return `./samples/${selectedImage}.png`;
 }
 
-export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps) {
+export function InputPanel({ onImageDataExtracted = () => {} }: InputPanelProps) {
   const [selectedImage, setSelectedImage] = useState(random.nextArrayItem(inputOptiopns));
   const [customImage, setCustomImage] = useState<string | null>(null);
 
@@ -128,8 +128,14 @@ export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps
   return (
     <InputPanelStyled>
       <h2>1. Select the image</h2>
-      <StyledSelect onChange={(e) => { setSelectedImage(e.target.value); setCustomImage(null); }} value={selectedImage}>
-        {inputOptiopns.map((option) => (
+      <StyledSelect
+        onChange={e => {
+          setSelectedImage(e.target.value);
+          setCustomImage(null);
+        }}
+        value={selectedImage}
+      >
+        {inputOptiopns.map(option => (
           <option key={option} value={option}>
             {option}
           </option>
@@ -141,4 +147,3 @@ export function InputPanel({ onImageDataExtracted = () => { } }: InputPanelProps
     </InputPanelStyled>
   );
 }
-

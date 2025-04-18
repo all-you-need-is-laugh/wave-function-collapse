@@ -1,14 +1,12 @@
-import { Pixel } from "./Pixel";
-import { Tile } from "./Tile";
+import { Pixel } from './Pixel';
+import { Tile } from './Tile';
 
 export class Cell {
   readonly options: Tile[];
 
   collapsed = false;
 
-  constructor(
-    tiles: Tile[]
-  ) {
+  constructor(tiles: Tile[]) {
     this.options = [...tiles];
   }
 
@@ -59,5 +57,4 @@ export class Cell {
 
     return resultingPixel;
   }
-
 }

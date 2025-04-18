@@ -16,7 +16,7 @@ export async function readImageData(src: string): Promise<ImageData> {
         reject(new Error('Could not get canvas context'));
       }
     };
-    img.onerror = (err) => {
+    img.onerror = err => {
       reject(err);
     };
   });

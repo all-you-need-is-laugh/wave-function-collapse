@@ -11,7 +11,7 @@ export class WaveFunctionCollapse {
 
   constructor(
     private readonly _grid: Grid,
-    seed: number
+    seed: number,
   ) {
     this._random = new Random(seed);
     this._startIteration();
@@ -132,7 +132,11 @@ export class WaveFunctionCollapse {
     if (this._grid.get(x, y).collapsed) {
       return;
     }
-    if (this.pendingSteps.some(step => step.x === x && step.y === y && step.type === WFCStepType.CALCULATE_ENTROPY)) {
+    if (
+      this.pendingSteps.some(
+        step => step.x === x && step.y === y && step.type === WFCStepType.CALCULATE_ENTROPY,
+      )
+    ) {
       return;
     }
     this.pendingSteps.push(WFCStep.CalculateEntropy(x, y));
@@ -154,22 +158,38 @@ export class WaveFunctionCollapse {
 
     // check top neighbor
     if (y > 0) {
-      availableOptions = this._filterByNeighbor(this._grid.get(x, y - 1), availableOptions, tile => tile.bottomNeighbors);
+      availableOptions = this._filterByNeighbor(
+        this._grid.get(x, y - 1),
+        availableOptions,
+        tile => tile.bottomNeighbors,
+      );
     }
 
     // check right neighbor
     if (x < this._grid.width - 1) {
-      availableOptions = this._filterByNeighbor(this._grid.get(x + 1, y), availableOptions, tile => tile.leftNeighbors);
+      availableOptions = this._filterByNeighbor(
+        this._grid.get(x + 1, y),
+        availableOptions,
+        tile => tile.leftNeighbors,
+      );
     }
 
     // check bottom neighbor
     if (y < this._grid.height - 1) {
-      availableOptions = this._filterByNeighbor(this._grid.get(x, y + 1), availableOptions, tile => tile.topNeighbors);
+      availableOptions = this._filterByNeighbor(
+        this._grid.get(x, y + 1),
+        availableOptions,
+        tile => tile.topNeighbors,
+      );
     }
 
     // check left neighbor
     if (x > 0) {
-      availableOptions = this._filterByNeighbor(this._grid.get(x - 1, y), availableOptions, tile => tile.rightNeighbors);
+      availableOptions = this._filterByNeighbor(
+        this._grid.get(x - 1, y),
+        availableOptions,
+        tile => tile.rightNeighbors,
+      );
     }
 
     cell.options.splice(0, cell.options.length, ...availableOptions);
@@ -183,7 +203,11 @@ export class WaveFunctionCollapse {
     }
   }
 
-  private _filterByNeighbor(neighborCell: Cell, originalOptions: Tile[], neighborsFieldGetter: (tile: Tile) => Tile[]): Tile[] {
+  private _filterByNeighbor(
+    neighborCell: Cell,
+    originalOptions: Tile[],
+    neighborsFieldGetter: (tile: Tile) => Tile[],
+  ): Tile[] {
     // console.group(neighborsFieldGetter, neighborCell.options.length);
 
     const availableOptionSet = neighborCell.options.reduce((accumulator, option) => {

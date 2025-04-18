@@ -40,17 +40,26 @@ interface TilesPanelProps {
 const TilesDebug = ({ tiles }: { tiles: Tile[] }) => (
   <>
     <br />
-    {
-      tiles.map((tile, index) => (
-        <div key={index}>
-          <div>Tile {index}</div>
-          <StyledLabel>Top:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.topNeighbors} /><br />
-          <StyledLabel>Right:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.rightNeighbors} /><br />
-          <StyledLabel>Bottom:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.bottomNeighbors} /><br />
-          <StyledLabel>Left:</StyledLabel><StyledTile src={tile.url} /><TileSet tiles={tile.leftNeighbors} />
-        </div>
-      ))
-    }
+    {tiles.map((tile, index) => (
+      <div key={index}>
+        <div>Tile {index}</div>
+        <StyledLabel>Top:</StyledLabel>
+        <StyledTile src={tile.url} />
+        <TileSet tiles={tile.topNeighbors} />
+        <br />
+        <StyledLabel>Right:</StyledLabel>
+        <StyledTile src={tile.url} />
+        <TileSet tiles={tile.rightNeighbors} />
+        <br />
+        <StyledLabel>Bottom:</StyledLabel>
+        <StyledTile src={tile.url} />
+        <TileSet tiles={tile.bottomNeighbors} />
+        <br />
+        <StyledLabel>Left:</StyledLabel>
+        <StyledTile src={tile.url} />
+        <TileSet tiles={tile.leftNeighbors} />
+      </div>
+    ))}
   </>
 );
 
@@ -72,10 +81,16 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         setExtractionStatus(`Tile ${tileIndex} processed. Total tiles: ${totalTiles}`);
       });
 
-      const extractedTiles = await extractTiles(imageData, { tileSize: 3, loop, includeFlipped, includeRotated }, eventEmitter);
+      const extractedTiles = await extractTiles(
+        imageData,
+        { tileSize: 3, loop, includeFlipped, includeRotated },
+        eventEmitter,
+      );
       setTiles(extractedTiles);
       onTilesExtracted(extractedTiles);
-      setExtractionStatus(`Extraction completed. Total tiles extracted: ${extractedTiles.length}`);
+      setExtractionStatus(
+        `Extraction completed. Total tiles extracted: ${extractedTiles.length}`,
+      );
     }
   };
 
@@ -86,7 +101,9 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         <input
           type="checkbox"
           checked={loop}
-          onChange={(e) => setLoop(e.target.checked)}
+          onChange={e => {
+            setLoop(e.target.checked);
+          }}
         />
         Loop
       </label>
@@ -94,7 +111,9 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         <input
           type="checkbox"
           checked={includeFlipped}
-          onChange={(e) => setIncludeFlipped(e.target.checked)}
+          onChange={e => {
+            setIncludeFlipped(e.target.checked);
+          }}
         />
         Include Flipped
       </label>
@@ -102,13 +121,16 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
         <input
           type="checkbox"
           checked={includeRotated}
-          onChange={(e) => setIncludeRotated(e.target.checked)}
+          onChange={e => {
+            setIncludeRotated(e.target.checked);
+          }}
         />
         Include Rotated
       </label>
       <button onClick={handleExtractTiles}>Extract Tiles</button>
       <div>
-        <StyledLabel>Extraction status:</StyledLabel>{extractionStatus}
+        <StyledLabel>Extraction status:</StyledLabel>
+        {extractionStatus}
       </div>
       <ScrollableTileSet>
         <TileSet tiles={tiles} />

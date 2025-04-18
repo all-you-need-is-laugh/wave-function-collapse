@@ -1,26 +1,25 @@
-import { Pixel } from "./Pixel";
+import { Pixel } from './Pixel';
 
 interface TileOverlappingParams {
-  xAStart: number,
-  xBStart: number,
-  xLen: number,
-  yAStart: number,
-  yBStart: number,
-  yLen: number
+  xAStart: number;
+  xBStart: number;
+  xLen: number;
+  yAStart: number;
+  yBStart: number;
+  yLen: number;
 }
 
 export class Tile {
-
   readonly topNeighbors: Tile[] = [];
   readonly rightNeighbors: Tile[] = [];
   readonly bottomNeighbors: Tile[] = [];
   readonly leftNeighbors: Tile[] = [];
 
-  private _url: string = "";
-  
+  private _url = '';
+
   constructor(
     public readonly size: number,
-    public readonly data: Pixel[]
+    public readonly data: Pixel[],
   ) {}
 
   fillNeighbors(tiles: Tile[]): void {
@@ -28,7 +27,7 @@ export class Tile {
     this.rightNeighbors.length = 0;
     this.bottomNeighbors.length = 0;
     this.leftNeighbors.length = 0;
-    
+
     for (const tile of tiles) {
       if (this._checkTilesOverlapFromTop(tile)) {
         this.topNeighbors.push(tile);
@@ -116,11 +115,11 @@ export class Tile {
   }
 
   private _generateUrl(): string {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
 
     if (!context) {
-      throw new Error("Canvas 2d context is not supported");
+      throw new Error('Canvas 2d context is not supported');
     }
 
     canvas.width = this.size;
@@ -151,7 +150,7 @@ export class Tile {
       xLen: this.size,
       yAStart: 0,
       yBStart: Math.ceil(this.size / 2) - 1,
-      yLen: Math.ceil(this.size / 2)
+      yLen: Math.ceil(this.size / 2),
     });
   }
 
@@ -162,7 +161,7 @@ export class Tile {
       xLen: Math.ceil(this.size / 2),
       yAStart: 0,
       yBStart: 0,
-      yLen: this.size
+      yLen: this.size,
     });
   }
 
@@ -173,7 +172,7 @@ export class Tile {
       xLen: this.size,
       yAStart: Math.ceil(this.size / 2) - 1,
       yBStart: 0,
-      yLen: Math.ceil(this.size / 2)
+      yLen: Math.ceil(this.size / 2),
     });
   }
 
@@ -184,16 +183,19 @@ export class Tile {
       xLen: Math.ceil(this.size / 2),
       yAStart: 0,
       yBStart: 0,
-      yLen: this.size
+      yLen: this.size,
     });
   }
 
-  private _checkTilesOverlap(tile: Tile, { xAStart, yAStart, xBStart, yBStart, xLen, yLen }: TileOverlappingParams): boolean {
+  private _checkTilesOverlap(
+    tile: Tile,
+    { xAStart, yAStart, xBStart, yBStart, xLen, yLen }: TileOverlappingParams,
+  ): boolean {
     for (let y = 0; y < yLen; y++) {
       for (let x = 0; x < xLen; x++) {
         const xA = xAStart + x;
         const yA = yAStart + y;
-        
+
         const xB = xBStart + x;
         const yB = yBStart + y;
 

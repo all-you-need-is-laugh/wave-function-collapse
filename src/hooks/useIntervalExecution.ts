@@ -6,7 +6,10 @@ interface ExecutionControls {
   stop: () => void;
 }
 
-export function useIntervalExecution(executeFunction: () => void, interval: number): ExecutionControls {
+export function useIntervalExecution(
+  executeFunction: () => void,
+  interval: number,
+): ExecutionControls {
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
