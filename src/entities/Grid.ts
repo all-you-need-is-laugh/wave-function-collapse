@@ -13,7 +13,11 @@ export class Grid {
   }
 
   get(x: number, y: number): Cell {
-    return this._cells[this._index(x, y)];
+    const cell = this._cells[this._index(x, y)];
+    if (!cell) {
+      throw new Error(`Cell at (${x}, ${y}) is undefined`);
+    }
+    return cell;
   }
 
   set(x: number, y: number, cell: Cell): void {
