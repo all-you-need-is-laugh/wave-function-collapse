@@ -7,7 +7,7 @@ export const consoleImage = (url: string, label = '', size = 6): void => {
   // image.onload = () => {
   const style = [
     // 'font-size: 1px;',
-    'padding: ' + size + 'px ' + size + 'px;',
+    `padding: ${size}px ${size}px;`,
     'background: url(' + url + ') no-repeat;',
     'background-size: contain;',
     'image-rendering: pixelated;',
