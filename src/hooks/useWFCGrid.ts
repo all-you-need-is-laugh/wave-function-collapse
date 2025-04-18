@@ -49,11 +49,7 @@ export const useWFCGrid = ({
     if (!grid) {
       gridRef.current = grid = new Grid(width, height);
 
-      grid.fill((_x, _y) => new Cell(tiles));
-
-      // const cell = grid.get(random.nextInt(0, width), random.nextInt(0, height));
-      
-      // cell.forceCollapse(grid);
+      grid.fill(() => new Cell(tiles));
     }
 
     let wfc = wfcRef.current;

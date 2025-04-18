@@ -60,6 +60,7 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
   const [includeFlipped, setIncludeFlipped] = useState(true);
   const [includeRotated, setIncludeRotated] = useState(true);
   const [extractionStatus, setExtractionStatus] = useState<string | null>(null);
+  const [debugMode] = useState(false);
 
   const handleExtractTiles = async () => {
     if (imageData) {
@@ -112,7 +113,7 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
       <ScrollableTileSet>
         <TileSet tiles={tiles} />
       </ScrollableTileSet>
-      {false && <TilesDebug tiles={tiles} />}
+      {debugMode && <TilesDebug tiles={tiles} />}
     </TilesPanelStyled>
   );
 }
