@@ -1,6 +1,7 @@
 import Random from 'prando';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { EMPTY_FUNCTION } from '../constants/empty';
 import { readImageData } from '../utils/readImageData';
 import Panel from './Panel';
 
@@ -105,15 +106,19 @@ function imageFullPath(selectedImage: string): string {
   return `./samples/${selectedImage}.png`;
 }
 
-export function InputPanel({ onImageDataExtracted = () => {} }: InputPanelProps) {
+export function InputPanel({ onImageDataExtracted = EMPTY_FUNCTION }: InputPanelProps) {
   const [selectedImage, setSelectedImage] = useState(random.nextArrayItem(inputOptiopns));
   const [customImage, setCustomImage] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const imagePath = customImage || imageFullPath(selectedImage);
-      const imageData = await readImageData(imagePath);
-      onImageDataExtracted(imageData);
+    void (async () => {
+      try {
+        const imagePath = customImage ?? imageFullPath(selectedImage);
+        const imageData = await readImageData(imagePath);
+        onImageDataExtracted(imageData);
+      } catch (error) {
+        console.error('Error reading image data:', error);
+      }
     })();
   }, [selectedImage, customImage, onImageDataExtracted]);
 
@@ -143,7 +148,7 @@ export function InputPanel({ onImageDataExtracted = () => {} }: InputPanelProps)
       </StyledSelect>
       <div>OR</div>
       <StyledFileInput type="file" accept="image/*" onChange={handleFileChange} />
-      <StyledImage src={customImage || imageFullPath(selectedImage)} />
+      <StyledImage src={customImage ?? imageFullPath(selectedImage)} />
     </InputPanelStyled>
   );
 }
