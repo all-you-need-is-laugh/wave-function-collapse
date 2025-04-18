@@ -1,3 +1,5 @@
+type ImageErrorEvent = Parameters<NonNullable<HTMLImageElement['onerror']>>[0];
+
 export async function readImageData(src: string): Promise<ImageData> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -16,8 +18,19 @@ export async function readImageData(src: string): Promise<ImageData> {
         reject(new Error('Could not get canvas context'));
       }
     };
-    img.onerror = err => {
-      reject(err);
+    img.onerror = (
+      _event: ImageErrorEvent,
+      _source?: string,
+      _lineno?: number,
+      _colno?: number,
+      error?: Error,
+    ) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      reject(new Error(`Failed to load image: ${src}`));
     };
   });
 }
