@@ -34,11 +34,17 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      ...prettier.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
-      ...prettier.configs.recommended.rules,
+      "@typescript-eslint/restrict-template-expressions": ["error", {
+        allowNumber: true,
+        allowBoolean: true,
+        allowNullish: true,
+        allowAny: false,
+      }]
     },
   },
 )
