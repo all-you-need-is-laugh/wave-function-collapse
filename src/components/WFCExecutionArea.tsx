@@ -98,7 +98,7 @@ function drawGrid(
         context.fillStyle = luminance > 0.5 ? 'black' : 'white';
 
         // set font size
-        if (cell.options.length.toString().length > 2) {
+        if (cell.optionsCount.toString().length > 2) {
           context.font = `${cellSize * 0.55}px monospace`;
         } else {
           context.font = `${cellSize * 0.7}px monospace`;
@@ -107,7 +107,7 @@ function drawGrid(
 
         // add number in that rect
         context.fillText(
-          cell.options.length.toString(),
+          cell.optionsCount.toString(),
           x * cellSize + cellSize / 2,
           y * cellSize + cellSize * 0.7,
         );

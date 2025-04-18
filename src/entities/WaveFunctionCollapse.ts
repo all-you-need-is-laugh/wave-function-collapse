@@ -67,7 +67,7 @@ export class WaveFunctionCollapse {
         return;
       }
 
-      const entropy = cell.options.length;
+      const entropy = cell.optionsCount;
       let group = entropyGroups.get(entropy);
       if (!group) {
         group = [];
@@ -99,8 +99,7 @@ export class WaveFunctionCollapse {
     }
 
     const cell = this._grid.get(x, y);
-    const tileIndexToCollapse = this._random.nextInt(0, cell.options.length - 1);
-    // consoleTile(cell.options[tileIndexToCollapse], `collapsed [${x}, ${y}] with tile`);
+    const tileIndexToCollapse = this._random.nextInt(0, cell.optionsCount - 1);
     cell.collapse(tileIndexToCollapse);
 
     this._propagateEntropyCalculation(x, y);
@@ -153,8 +152,8 @@ export class WaveFunctionCollapse {
       return;
     }
 
-    const startOptionsLength = cell.options.length;
-    let availableOptions = [...cell.options];
+    const startOptionsLength = cell.optionsCount;
+    let availableOptions = cell.getAllOptions();
 
     // check top neighbor
     if (y > 0) {
@@ -192,13 +191,13 @@ export class WaveFunctionCollapse {
       );
     }
 
-    cell.options.splice(0, cell.options.length, ...availableOptions);
+    cell.resetOptions(availableOptions);
 
-    if (cell.options.length < 2) {
+    if (cell.optionsCount < 2) {
       this.pendingSteps.unshift(WFCStep.Collapse(x, y));
     }
 
-    if (startOptionsLength !== cell.options.length) {
+    if (startOptionsLength !== cell.optionsCount) {
       this._propagateEntropyCalculation(x, y);
     }
   }
@@ -208,22 +207,17 @@ export class WaveFunctionCollapse {
     originalOptions: Tile[],
     neighborsFieldGetter: (tile: Tile) => Tile[],
   ): Tile[] {
-    // console.group(neighborsFieldGetter, neighborCell.options.length);
+    const availableOptionSet = new Set<Tile>();
 
-    const availableOptionSet = neighborCell.options.reduce((accumulator, option) => {
-      // consoleTile(option, 'option');
+    for (let i = 0; i < neighborCell.optionsCount; i++) {
+      const option = neighborCell.getOption(i);
 
       for (const tile of neighborsFieldGetter(option)) {
-        // consoleTile(tile, `neigbor's tile; available: ${originalOptions.includes(tile)}`);
-
         if (originalOptions.includes(tile)) {
-          accumulator.add(tile);
+          availableOptionSet.add(tile);
         }
       }
-      return accumulator;
-    }, new Set<Tile>());
-
-    // console.groupEnd();
+    }
 
     return [...availableOptionSet];
   }
