@@ -84,35 +84,39 @@ function drawGrid(
   onlyShowCollapsed: boolean,
 ) {
   grid.forEach((cell: Cell, x: number, y: number) => {
-    if (!onlyShowCollapsed || cell.collapsed) {
-      const pixel = cell.getPixel();
-
-      context.fillStyle = pixel.getColor();
-      context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-
-      drawBorder(context, x, y, 'black', 0.2, cellSize, drawBorderEnabled);
-
-      if (showText && !cell.collapsed) {
-        // choose contrast color
-        const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
-        context.fillStyle = luminance > 0.5 ? 'black' : 'white';
-
-        // set font size
-        if (cell.optionsCount.toString().length > 2) {
-          context.font = `${cellSize * 0.55}px monospace`;
-        } else {
-          context.font = `${cellSize * 0.7}px monospace`;
-        }
-        context.textAlign = 'center';
-
-        // add number in that rect
-        context.fillText(
-          cell.optionsCount.toString(),
-          x * cellSize + cellSize / 2,
-          y * cellSize + cellSize * 0.7,
-        );
-      }
+    if (onlyShowCollapsed && !cell.collapsed) {
+      return undefined;
     }
+
+    const pixel = cell.getPixel();
+
+    context.fillStyle = pixel.getColor();
+    context.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+
+    drawBorder(context, x, y, 'black', 0.2, cellSize, drawBorderEnabled);
+
+    if (!showText || cell.collapsed) {
+      return undefined;
+    }
+
+    // choose contrast color
+    const luminance = (0.299 * pixel.r + 0.587 * pixel.g + 0.114 * pixel.b) / 255;
+    context.fillStyle = luminance > 0.5 ? 'black' : 'white';
+
+    // set font size
+    if (cell.optionsCount.toString().length > 2) {
+      context.font = `${cellSize * 0.55}px monospace`;
+    } else {
+      context.font = `${cellSize * 0.7}px monospace`;
+    }
+    context.textAlign = 'center';
+
+    // add number in that rect
+    context.fillText(
+      cell.optionsCount.toString(),
+      x * cellSize + cellSize / 2,
+      y * cellSize + cellSize * 0.7,
+    );
   });
 
   if (executedStep) {

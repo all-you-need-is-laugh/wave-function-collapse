@@ -64,7 +64,7 @@ export class WaveFunctionCollapse {
     this._grid.forEach((cell: Cell) => {
       if (cell.collapsed) {
         collapsedCount++;
-        return;
+        return undefined;
       }
 
       const entropy = cell.optionsCount;

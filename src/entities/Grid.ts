@@ -49,7 +49,7 @@ export class Grid {
     }
   }
 
-  forEach(callback: (cell: Cell, x: number, y: number) => boolean | void): void {
+  forEach(callback: (cell: Cell, x: number, y: number) => boolean | undefined): void {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         const result = callback(this.get(x, y), x, y);
