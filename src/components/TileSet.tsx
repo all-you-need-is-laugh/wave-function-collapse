@@ -36,12 +36,18 @@ const TileSet = ({ tiles }: TileSetProps) => {
       const xOffset = (tileIndex % columns) * tileSize;
       const yOffset = Math.floor(tileIndex / columns) * tileSize;
 
-      tile.data.forEach((pixel, index) => {
-        const x = (index % tile.size) * pixelSize + xOffset;
-        const y = Math.floor(index / tile.size) * pixelSize + yOffset;
-        context.fillStyle = `rgb(${pixel.r}, ${pixel.g}, ${pixel.b})`;
-        context.fillRect(x, y, pixelSize, pixelSize);
-      });
+      for (let y = 0; y < tile.size; y++) {
+        for (let x = 0; x < tile.size; x++) {
+          const pixel = tile.getPixel(x, y);
+          context.fillStyle = `rgb(${pixel.r}, ${pixel.g}, ${pixel.b})`;
+          context.fillRect(
+            x * pixelSize + xOffset,
+            y * pixelSize + yOffset,
+            pixelSize,
+            pixelSize,
+          );
+        }
+      }
 
       // Draw dotted border around each tile
       context.strokeStyle = 'black';

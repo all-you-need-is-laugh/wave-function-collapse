@@ -19,8 +19,35 @@ export class Tile {
 
   constructor(
     public readonly size: number,
-    public readonly data: Pixel[],
-  ) {}
+    private readonly pixels: Pixel[],
+  ) {
+    if (pixels.length !== size ** 2) {
+      throw new Error('Pixels length must be equal to size squared');
+    }
+  }
+
+  getIndex(x: number, y: number): number {
+    return x + y * this.size;
+  }
+
+  protected getPixelByIndex(index: number): Pixel {
+    if (index < 0 || index >= this.pixels.length) {
+      throw new Error(`Pixel index ${index} out of bounds (0-${this.pixels.length - 1})`);
+    }
+
+    const pixel = this.pixels[index];
+
+    if (!pixel) {
+      throw new Error(`Pixel at index ${index} is undefined`);
+    }
+
+    return pixel;
+  }
+
+  getPixel(x: number, y: number): Pixel {
+    const index = this.getIndex(x, y);
+    return this.getPixelByIndex(index);
+  }
 
   fillNeighbors(tiles: Tile[]): void {
     this.topNeighbors.length = 0;
@@ -48,7 +75,7 @@ export class Tile {
   }
 
   equals(tile: Tile): boolean {
-    return this.data.every((pixel, index) => pixel.equals(tile.data[index]));
+    return this.pixels.every((pixel, index) => pixel.equals(tile.getPixelByIndex(index)));
   }
 
   get url(): string {
@@ -63,8 +90,7 @@ export class Tile {
     const flippedData: Pixel[] = [];
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const originalIndex = y * this.size + (this.size - 1 - x);
-        flippedData.push(this.data[originalIndex]);
+        flippedData.push(this.getPixel(this.size - 1 - x, y));
       }
     }
     return new Tile(this.size, flippedData);
@@ -74,8 +100,7 @@ export class Tile {
     const flippedData: Pixel[] = [];
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const originalIndex = (this.size - 1 - y) * this.size + x;
-        flippedData.push(this.data[originalIndex]);
+        flippedData.push(this.getPixel(x, this.size - 1 - y));
       }
     }
     return new Tile(this.size, flippedData);
@@ -85,8 +110,7 @@ export class Tile {
     const rotatedData: Pixel[] = [];
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const originalIndex = (this.size - 1 - x) * this.size + y;
-        rotatedData.push(this.data[originalIndex]);
+        rotatedData.push(this.getPixel(y, this.size - 1 - x));
       }
     }
     return new Tile(this.size, rotatedData);
@@ -96,8 +120,7 @@ export class Tile {
     const rotatedData: Pixel[] = [];
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const originalIndex = (this.size - 1 - y) * this.size + (this.size - 1 - x);
-        rotatedData.push(this.data[originalIndex]);
+        rotatedData.push(this.getPixel(this.size - 1 - x, this.size - 1 - y));
       }
     }
     return new Tile(this.size, rotatedData);
@@ -107,8 +130,7 @@ export class Tile {
     const rotatedData: Pixel[] = [];
     for (let y = 0; y < this.size; y++) {
       for (let x = 0; x < this.size; x++) {
-        const originalIndex = x * this.size + (this.size - 1 - y);
-        rotatedData.push(this.data[originalIndex]);
+        rotatedData.push(this.getPixel(this.size - 1 - y, x));
       }
     }
     return new Tile(this.size, rotatedData);
@@ -129,7 +151,7 @@ export class Tile {
     const data = imageData.data;
 
     for (let i = 0; i < this.size * this.size; i++) {
-      const pixel = this.data[i];
+      const pixel = this.getPixelByIndex(i);
       const j = i * 4;
 
       data[j] = pixel.r;
@@ -199,8 +221,8 @@ export class Tile {
         const xB = xBStart + x;
         const yB = yBStart + y;
 
-        const pixelA = this.data[yA * this.size + xA];
-        const pixelB = tile.data[yB * this.size + xB];
+        const pixelA = this.getPixel(xA, yA);
+        const pixelB = tile.getPixel(xB, yB);
 
         if (!pixelA.equals(pixelB)) {
           return false;

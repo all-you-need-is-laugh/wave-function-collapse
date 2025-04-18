@@ -66,7 +66,7 @@ export class Cell {
   getPixel(): Pixel {
     if (this.collapsed) {
       const tile = this.getCollapsedOption();
-      return tile.data[Math.floor(tile.data.length / 2)];
+      return tile.getPixel(Math.floor(tile.size / 2), Math.floor(tile.size / 2));
     }
 
     const resultingPixel: Pixel = new Pixel(0, 0, 0);
@@ -74,7 +74,7 @@ export class Cell {
     const len = this.optionsCount;
     for (let i = 0; i < len; i++) {
       const tile = this.getOption(i);
-      const pixel = tile.data[Math.floor(tile.data.length / 2)];
+      const pixel = tile.getPixel(Math.floor(tile.size / 2), Math.floor(tile.size / 2));
 
       resultingPixel.r += pixel.r / len;
       resultingPixel.g += pixel.g / len;
