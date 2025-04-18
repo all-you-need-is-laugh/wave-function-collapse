@@ -1,8 +1,8 @@
-import { EventEmitter } from 'events';
 import { useState } from 'react';
 import styled from 'styled-components';
+import { TypedEmitter } from 'tiny-typed-emitter';
 import { Tile } from '../entities/Tile';
-import { extractTiles } from '../utils/extractTiles';
+import { extractTiles, TileExtractionProgressEvents } from '../utils/extractTiles';
 import Panel from './Panel';
 import TileSet from './TileSet';
 
@@ -71,27 +71,36 @@ export function TilesPanel({ imageData, onTilesExtracted }: TilesPanelProps) {
   const [extractionStatus, setExtractionStatus] = useState<string | null>(null);
   const [debugMode] = useState(false);
 
-  const handleExtractTiles = async () => {
-    if (imageData) {
-      const eventEmitter = new EventEmitter();
-      eventEmitter.on('rowProcessed', ({ row, totalTiles }) => {
-        setExtractionStatus(`Row ${row} processed. Total tiles: ${totalTiles}`);
-      });
-      eventEmitter.on('tileProcessed', ({ tileIndex, totalTiles }) => {
-        setExtractionStatus(`Tile ${tileIndex} processed. Total tiles: ${totalTiles}`);
-      });
-
-      const extractedTiles = await extractTiles(
-        imageData,
-        { tileSize: 3, loop, includeFlipped, includeRotated },
-        eventEmitter,
-      );
-      setTiles(extractedTiles);
-      onTilesExtracted(extractedTiles);
-      setExtractionStatus(
-        `Extraction completed. Total tiles extracted: ${extractedTiles.length}`,
-      );
+  const handleExtractTiles = () => {
+    if (!imageData) {
+      return;
     }
+
+    void (async () => {
+      try {
+        const eventEmitter = new TypedEmitter<TileExtractionProgressEvents>();
+        eventEmitter.on('rowProcessed', ({ row, totalTiles }) => {
+          setExtractionStatus(`Row ${row} processed. Total tiles: ${totalTiles}`);
+        });
+        eventEmitter.on('tileProcessed', ({ tileIndex, totalTiles }) => {
+          setExtractionStatus(`Tile ${tileIndex} processed. Total tiles: ${totalTiles}`);
+        });
+
+        const extractedTiles = await extractTiles(
+          imageData,
+          { tileSize: 3, loop, includeFlipped, includeRotated },
+          eventEmitter,
+        );
+        setTiles(extractedTiles);
+        onTilesExtracted(extractedTiles);
+        setExtractionStatus(
+          `Extraction completed. Total tiles extracted: ${extractedTiles.length}`,
+        );
+      } catch (error) {
+        console.error('Error extracting tiles:', error);
+        setExtractionStatus('Error extracting tiles. Please check the console for details.');
+      }
+    })();
   };
 
   return (

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { TypedEmitter } from 'tiny-typed-emitter';
 import { Pixel } from '../entities/Pixel';
 import { Tile } from '../entities/Tile';
 import { asyncTimeoutLoop } from './asyncTimeoutLoop';
@@ -10,10 +10,15 @@ interface ExtractTilesSettings {
   includeRotated: boolean;
 }
 
+export interface TileExtractionProgressEvents {
+  rowProcessed: (args: { row: number; totalTiles: number }) => void;
+  tileProcessed: (args: { tileIndex: number; totalTiles: number }) => void;
+}
+
 export const extractTiles = async (
   imageData: ImageData,
   settings: ExtractTilesSettings,
-  eventEmitter?: EventEmitter,
+  eventEmitter?: TypedEmitter<TileExtractionProgressEvents>,
 ): Promise<Tile[]> => {
   const tiles: Tile[] = [];
   const { data, width, height } = imageData;
