@@ -41,6 +41,12 @@ export const extractTiles = async (
           const g = data[pixelIndex * 4 + 1];
           const b = data[pixelIndex * 4 + 2];
 
+          if (!r || !g || !b) {
+            throw new Error(
+              `Invalid pixel data at (${px}, ${py}): ${JSON.stringify({ r, g, b })}`,
+            );
+          }
+
           tileData.push(new Pixel(r, g, b));
         }
       }
@@ -70,7 +76,13 @@ export const extractTiles = async (
   });
 
   await asyncTimeoutLoop(0, tiles.length, i => {
-    tiles[i].fillNeighbors(tiles);
+    const tile = tiles[i];
+
+    if (!tile) {
+      throw new Error(`Tile at index ${i} is undefined`);
+    }
+
+    tile.fillNeighbors(tiles);
     if (eventEmitter) {
       eventEmitter.emit('tileProcessed', { tileIndex: i, totalTiles: tiles.length });
     }
