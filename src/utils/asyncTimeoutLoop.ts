@@ -15,7 +15,11 @@ export const asyncTimeoutLoop = async (
           resolve();
         }
       } catch (error) {
-        reject(error);
+        if (error instanceof Error) {
+          reject(error);
+        } else {
+          reject(new Error(`An unknown error occurred: ${String(error)}`));
+        }
       }
     };
 
