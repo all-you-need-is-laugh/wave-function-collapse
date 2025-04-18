@@ -41,7 +41,7 @@ export const extractTiles = async (
           const g = data[pixelIndex * 4 + 1];
           const b = data[pixelIndex * 4 + 2];
 
-          if (!r || !g || !b) {
+          if (typeof r !== 'number' || typeof g !== 'number' || typeof b !== 'number') {
             throw new Error(
               `Invalid pixel data at (${px}, ${py}): ${JSON.stringify({ r, g, b })}`,
             );
